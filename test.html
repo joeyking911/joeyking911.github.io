@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中英文翻译练习工具 - 服务器版本</title>
+    <title>中英文翻译练习工具 - 支持密码解密</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -113,7 +114,7 @@
         .file-upload-area {
             border: 3px dashed #cbd5e0;
             border-radius: 12px;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             transition: all 0.3s;
             cursor: pointer;
@@ -162,6 +163,46 @@
         .upload-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        }
+        
+        .password-input-area {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 10px;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .password-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .password-label {
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1rem;
+        }
+        
+        .password-input {
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        .password-hint {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 5px;
         }
         
         .url-input-area {
@@ -524,6 +565,54 @@
             box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
         }
         
+        .error-message {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ef4444;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .warning-message {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #f59e0b;
+            margin-top: 20px;
+        }
+        
+        .decryption-options {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .decryption-title {
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .decryption-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .decryption-options input[type="radio"] {
+            cursor: pointer;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 border-radius: 15px;
@@ -565,7 +654,7 @@
     <div class="container">
         <header>
             <h1>中英文翻译练习工具</h1>
-            <p class="subtitle">从服务器加载Excel文件，练习中文到英文翻译，并与标准答案对比</p>
+            <p class="subtitle">支持加密Excel文件，从服务器或本地上传文件，练习中文到英文翻译</p>
         </header>
         
         <div class="main-content">
@@ -587,26 +676,69 @@
                         <p class="upload-text">点击或拖拽Excel文件到此区域</p>
                         <p class="upload-hint">文件格式：.xlsx 或 .xls，第一列为中文，第二列为英文翻译</p>
                         <button class="upload-btn" id="uploadBtn">选择Excel文件</button>
-                        <input type="file" id="fileInput" accept=".xlsx,.xls">
+                        <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm">
+                    </div>
+                    
+                    <div class="password-input-area">
+                        <div class="password-input-group">
+                            <label class="password-label" for="filePassword">Excel文件密码（如果没有密码，请留空）</label>
+                            <input type="password" id="filePassword" class="password-input" placeholder="输入Excel文件密码（可选）">
+                            <p class="password-hint">如果您的Excel文件有密码保护，请在此输入密码。如果没有密码，请留空。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="decryption-options">
+                        <div class="decryption-title">
+                            <span>🔐</span> 解密选项
+                        </div>
+                        <label>
+                            <input type="radio" name="decryptionMethod" value="exceljs" checked>
+                            使用ExcelJS库（支持加密文件）
+                        </label>
+                        <label>
+                            <input type="radio" name="decryptionMethod" value="xlsx">
+                            使用XLSX库（仅支持未加密文件）
+                        </label>
                     </div>
                 </div>
                 
                 <!-- URL模式 -->
                 <div class="mode-content" id="urlMode">
-                        <div class="url-input-area">
-                            <p class="upload-text">输入服务器上Excel文件的URL：</p>
-                            <div class="url-input-group">
-                                <input type="text" id="serverUrl" placeholder="https://example.com/path/to/your/file.xlsx">
-                                <button class="load-btn" id="loadUrlBtn">加载文件</button>
-                            </div>
-                            <div class="example-urls">
-                                <div class="example-title">示例URL（点击使用）：</div>
-                                <div class="example-list">
-                                    <a href="#" class="example-url" data-url="https://raw.githubusercontent.com/SheetJS/sheetjs/master/demos/react/sample.xlsx">示例1: 通用数据</a>
-                                    <a href="#" class="example-url" data-url="https://docs.google.com/spreadsheets/d/1JkYVz6mCqG8qQjZqQjZqQjZqQjZqQjZqQjZqQjZqQjZqQ/export?format=xlsx">示例2: Google Sheets导出</a>
-                                </div>
+                    <div class="url-input-area">
+                        <p class="upload-text">输入服务器上Excel文件的URL：</p>
+                        <div class="url-input-group">
+                            <input type="text" id="serverUrl" placeholder="https://example.com/path/to/your/file.xlsx">
+                            <button class="load-btn" id="loadUrlBtn">加载文件</button>
+                        </div>
+                        <div class="example-urls">
+                            <div class="example-title">示例URL（点击使用）：</div>
+                            <div class="example-list">
+                                <a href="#" class="example-url" data-url="https://docs.google.com/spreadsheets/d/1JkYVz6mCqG8qQjZqQjZqQjZqQjZqQjZqQjZqQjZqQjZqQ/export?format=xlsx">示例1: Google Sheets导出</a>
                             </div>
                         </div>
+                        
+                        <div class="password-input-area">
+                            <div class="password-input-group">
+                                <label class="password-label" for="urlPassword">Excel文件密码（如果没有密码，请留空）</label>
+                                <input type="password" id="urlPassword" class="password-input" placeholder="输入Excel文件密码（可选）">
+                                <p class="password-hint">如果您的Excel文件有密码保护，请在此输入密码。如果没有密码，请留空。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="decryption-options">
+                            <div class="decryption-title">
+                                <span>🔐</span> 解密选项
+                            </div>
+                            <label>
+                                <input type="radio" name="urlDecryptionMethod" value="exceljs" checked>
+                                使用ExcelJS库（支持加密文件）
+                            </label>
+                            <label>
+                                <input type="radio" name="urlDecryptionMethod" value="xlsx">
+                                使用XLSX库（仅支持未加密文件）
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- 示例数据 -->
@@ -617,6 +749,7 @@
                     <div class="spinner"></div>
                     <p>正在加载Excel文件，请稍候...</p>
                 </div>
+                <div class="error-message" id="errorMessage"></div>
             </div>
             
             <!-- 翻译练习区域 -->
@@ -658,8 +791,9 @@
             <div class="instructions">
                 <h3><span>ℹ️</span> 使用说明</h3>
                 <ul>
-                    <li><strong>模式1 - 上传本地文件</strong>：上传本地Excel文件，第一列(A列)为中文句子，第二列(B列)为对应的英文翻译</li>
-                    <li><strong>模式2 - 从服务器加载</strong>：输入服务器上Excel文件的URL，文件需支持跨域访问(CORS)</li>
+                    <li><strong>模式1 - 上传本地文件</strong>：上传本地Excel文件，第一列(A列)为中文句子，第二列(B列)为对应的英文翻译。如果文件有密码，请在密码框中输入。</li>
+                    <li><strong>模式2 - 从服务器加载</strong>：输入服务器上Excel文件的URL，文件需支持跨域访问(CORS)。如果文件有密码，请在密码框中输入。</li>
+                    <li><strong>解密选项</strong>：ExcelJS库支持加密文件，XLSX库仅支持未加密文件。如果文件加密，请选择ExcelJS库。</li>
                     <li><strong>示例数据</strong>：如果没有Excel文件，可以使用示例数据立即开始练习</li>
                     <li>在输入框中输入您的英文翻译，点击"提交翻译"与标准答案对比</li>
                     <li>点击"下一个句子"继续练习，直到完成所有句子</li>
@@ -709,12 +843,15 @@
         const urlMode = document.getElementById('urlMode');
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+        const filePasswordInput = document.getElementById('filePassword');
+        const urlPasswordInput = document.getElementById('urlPassword');
         const serverUrlInput = document.getElementById('serverUrl');
         const loadUrlBtn = document.getElementById('loadUrlBtn');
         const exampleUrls = document.querySelectorAll('.example-url');
         const exampleDataBtn = document.getElementById('exampleDataBtn');
         const fileInfo = document.getElementById('fileInfo');
         const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
         const translationArea = document.getElementById('translationArea');
         const currentSentence = document.getElementById('currentSentence');
         const translationInput = document.getElementById('translationInput');
@@ -769,11 +906,11 @@
             
             if (e.dataTransfer.files.length) {
                 const file = e.dataTransfer.files[0];
-                if (file.name.match(/\.(xlsx|xls)$/)) {
+                if (file.name.match(/\.(xlsx|xls|xlsm)$/)) {
                     dataSource = `上传文件: ${file.name}`;
                     processExcelFile(file);
                 } else {
-                    alert('请上传Excel文件 (.xlsx 或 .xls 格式)');
+                    showError('请上传Excel文件 (.xlsx, .xls 或 .xlsm 格式)');
                 }
             }
         });
@@ -791,12 +928,12 @@
         loadUrlBtn.addEventListener('click', () => {
             const url = serverUrlInput.value.trim();
             if (!url) {
-                alert('请输入Excel文件的URL');
+                showError('请输入Excel文件的URL');
                 return;
             }
             
-            if (!url.match(/\.(xlsx|xls)$/)) {
-                alert('URL必须指向Excel文件 (.xlsx 或 .xls 格式)');
+            if (!url.match(/\.(xlsx|xls|xlsm)$/)) {
+                showError('URL必须指向Excel文件 (.xlsx, .xls 或 .xlsm 格式)');
                 return;
             }
             
@@ -811,7 +948,6 @@
                 const url = link.getAttribute('data-url');
                 serverUrlInput.value = url;
                 dataSource = `示例文件: ${url}`;
-                loadExcelFromUrl(url);
             });
         });
         
@@ -824,6 +960,7 @@
         // 从URL加载Excel文件
         async function loadExcelFromUrl(url) {
             showLoading(true);
+            hideError();
             fileInfo.style.display = 'none';
             
             try {
@@ -834,76 +971,71 @@
                 }
                 
                 const arrayBuffer = await response.arrayBuffer();
-                processExcelData(arrayBuffer, url);
+                const password = urlPasswordInput.value;
+                const decryptionMethod = document.querySelector('input[name="urlDecryptionMethod"]:checked').value;
+                
+                await processExcelData(arrayBuffer, url, password, decryptionMethod);
             } catch (error) {
                 console.error('加载Excel文件时出错:', error);
                 showLoading(false);
-                fileInfo.innerHTML = `
+                showError(`
                     <strong>加载失败:</strong> ${error.message}<br>
                     可能的原因：<br>
                     1. 文件URL不正确<br>
                     2. 服务器未启用CORS（跨域资源共享）<br>
                     3. 网络连接问题<br>
+                    4. 文件加密且密码错误<br>
                     建议：尝试使用示例数据，或下载文件后使用上传功能
-                `;
-                fileInfo.style.display = 'block';
-                fileInfo.style.backgroundColor = '#fee2e2';
-                fileInfo.style.borderLeftColor = '#ef4444';
+                `);
             }
         }
         
         // 处理Excel文件（上传模式）
         function processExcelFile(file) {
             showLoading(true);
+            hideError();
             fileInfo.style.display = 'none';
             
             const reader = new FileReader();
             
-            reader.onload = function(e) {
-                processExcelData(e.target.result, file.name);
+            reader.onload = async function(e) {
+                try {
+                    const password = filePasswordInput.value;
+                    const decryptionMethod = document.querySelector('input[name="decryptionMethod"]:checked').value;
+                    await processExcelData(e.target.result, file.name, password, decryptionMethod);
+                } catch (error) {
+                    showLoading(false);
+                    showError(`处理文件时出错: ${error.message}`);
+                }
             };
             
             reader.onerror = function() {
                 showLoading(false);
-                fileInfo.innerHTML = `<strong>错误:</strong> 读取文件时出错`;
-                fileInfo.style.display = 'block';
-                fileInfo.style.backgroundColor = '#fee2e2';
-                fileInfo.style.borderLeftColor = '#ef4444';
+                showError('读取文件时出错，请检查文件是否完整且可访问。');
             };
             
             reader.readAsArrayBuffer(file);
         }
         
         // 处理Excel数据（通用函数）
-        function processExcelData(data, sourceName) {
+        async function processExcelData(data, sourceName, password, decryptionMethod) {
             try {
-                const workbook = XLSX.read(data, { type: 'array' });
-                
-                // 获取第一个工作表
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                
-                // 将工作表转换为JSON
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                
                 // 清空之前的数据
                 chineseSentences = [];
                 englishAnswers = [];
                 
-                // 提取A列和B列的数据
-                jsonData.forEach((row, index) => {
-                    if (row[0] && row[0].toString().trim() !== '') {
-                        chineseSentences.push(row[0].toString().trim());
-                        englishAnswers.push(row[1] ? row[1].toString().trim() : '');
-                    }
-                });
+                if (decryptionMethod === 'exceljs' && typeof ExcelJS !== 'undefined') {
+                    // 使用ExcelJS库处理（支持加密文件）
+                    await processWithExcelJS(data, password);
+                } else {
+                    // 使用XLSX库处理（仅支持未加密文件）
+                    processWithXLSX(data);
+                }
                 
                 // 检查是否成功提取数据
                 if (chineseSentences.length === 0) {
                     showLoading(false);
-                    fileInfo.innerHTML = `<strong>错误:</strong> 没有在Excel文件的A列找到中文句子。请确保第一列是中文句子。`;
-                    fileInfo.style.display = 'block';
-                    fileInfo.style.backgroundColor = '#fee2e2';
-                    fileInfo.style.borderLeftColor = '#ef4444';
+                    showError('没有在Excel文件的A列找到中文句子。请确保第一列是中文句子。');
                     return;
                 }
                 
@@ -913,6 +1045,7 @@
                     <strong>数据加载成功！</strong><br>
                     来源: ${dataSource}<br>
                     找到 ${chineseSentences.length} 个中文句子<br>
+                    解密方法: ${decryptionMethod === 'exceljs' ? 'ExcelJS（支持加密）' : 'XLSX（仅未加密）'}
                 `;
                 fileInfo.style.display = 'block';
                 fileInfo.style.backgroundColor = '#e6f7ff';
@@ -937,14 +1070,80 @@
             } catch (error) {
                 console.error('解析Excel文件时出错:', error);
                 showLoading(false);
-                fileInfo.innerHTML = `
-                    <strong>错误:</strong> 解析Excel文件时出错。<br>
+                
+                let errorMsg = `
+                    <strong>解析Excel文件时出错:</strong> ${error.message}<br>
                     请确保文件格式正确，且包含A列（中文）和B列（英文）数据。
                 `;
-                fileInfo.style.display = 'block';
-                fileInfo.style.backgroundColor = '#fee2e2';
-                fileInfo.style.borderLeftColor = '#ef4444';
+                
+                if (error.message.includes('password') || error.message.includes('解密')) {
+                    errorMsg += '<br><br><strong>提示：</strong> 文件可能需要密码。请检查：<br>' +
+                               '1. 是否输入了正确的密码<br>' +
+                               '2. 是否选择了正确的解密方法（加密文件需要使用ExcelJS库）<br>' +
+                               '3. 如果文件没有密码，请尝试清空密码框并选择XLSX库';
+                }
+                
+                showError(errorMsg);
             }
+        }
+        
+        // 使用ExcelJS库处理Excel文件（支持加密）
+        async function processWithExcelJS(data, password) {
+            const workbook = new ExcelJS.Workbook();
+            
+            // 如果提供了密码，使用密码解密
+            if (password) {
+                await workbook.xlsx.load(data, { password: password });
+            } else {
+                await workbook.xlsx.load(data);
+            }
+            
+            // 获取第一个工作表
+            const worksheet = workbook.worksheets[0];
+            
+            // 遍历行提取数据
+            worksheet.eachRow((row, rowNumber) => {
+                // 跳过可能的标题行（第一行）
+                if (rowNumber === 1 && row.getCell(1).value && 
+                    (row.getCell(1).value.toString().includes('中文') || 
+                     row.getCell(1).value.toString().includes('Chinese'))) {
+                    return; // 跳过标题行
+                }
+                
+                const chinese = row.getCell(1).value;
+                const english = row.getCell(2).value;
+                
+                if (chinese && chinese.toString().trim() !== '') {
+                    chineseSentences.push(chinese.toString().trim());
+                    englishAnswers.push(english ? english.toString().trim() : '');
+                }
+            });
+        }
+        
+        // 使用XLSX库处理Excel文件（不支持加密）
+        function processWithXLSX(data) {
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // 获取第一个工作表
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            
+            // 将工作表转换为JSON
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            
+            // 提取A列和B列的数据
+            jsonData.forEach((row, index) => {
+                // 跳过可能的标题行
+                if (index === 0 && row[0] && 
+                    (row[0].toString().includes('中文') || 
+                     row[0].toString().includes('Chinese'))) {
+                    return;
+                }
+                
+                if (row[0] && row[0].toString().trim() !== '') {
+                    chineseSentences.push(row[0].toString().trim());
+                    englishAnswers.push(row[1] ? row[1].toString().trim() : '');
+                }
+            });
         }
         
         // 使用示例数据
@@ -960,8 +1159,7 @@
                 "请把盐递给我。",
                 "他是一位非常有经验的工程师。",
                 "我们计划明年去日本旅行。",
-                "这个问题比我想象的要复杂。",
-				"这话可不能跟英国人说。\你不能对一个英国人提这种要求。"
+                "这个问题比我想象的要复杂。"
             ];
             
             englishAnswers = [
@@ -974,8 +1172,7 @@
                 "Please pass me the salt.",
                 "He is a very experienced engineer.",
                 "We plan to travel to Japan next year.",
-                "This problem is more complicated than I thought.",
-				"You cannot ask that of an Englishman."
+                "This problem is more complicated than I thought."
             ];
             
             // 显示文件信息
@@ -1009,6 +1206,17 @@
         // 显示加载状态
         function showLoading(isLoading) {
             loading.style.display = isLoading ? 'block' : 'none';
+        }
+        
+        // 显示错误信息
+        function showError(message) {
+            errorMessage.innerHTML = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        // 隐藏错误信息
+        function hideError() {
+            errorMessage.style.display = 'none';
         }
         
         // 显示当前句子
@@ -1160,7 +1368,19 @@
             currentSentence.textContent = "欢迎使用中英文翻译练习工具！请选择数据源开始练习。";
             
             // 设置默认URL示例
-            serverUrlInput.value = "https://raw.githubusercontent.com/SheetJS/sheetjs/master/demos/react/sample.xlsx";
+            serverUrlInput.value = "https://joeyking911.github.io/test.xlsx";
+            
+            // 检查ExcelJS库是否加载成功
+            if (typeof ExcelJS === 'undefined') {
+                console.warn('ExcelJS库加载失败，加密文件功能可能不可用');
+                const warning = document.createElement('div');
+                warning.className = 'warning-message';
+                warning.innerHTML = `
+                    <strong>注意：</strong> ExcelJS库加载中，加密文件功能可能受限。
+                    如果遇到加密文件读取问题，请刷新页面重试。
+                `;
+                document.querySelector('.main-content').insertBefore(warning, document.querySelector('.section'));
+            }
         });
     </script>
 </body>
