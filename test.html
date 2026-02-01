@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中英文翻译练习工具</title>
+    <title>中英文翻译练习工具 - 服务器版本</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <style>
         * {
@@ -21,7 +21,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background-color: white;
             border-radius: 20px;
@@ -73,8 +73,41 @@
             gap: 10px;
         }
         
-        .section-title i {
-            color: #4b6cb7;
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+        
+        .mode-btn {
+            padding: 12px 25px;
+            background-color: #e2e8f0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
+            color: white;
+        }
+        
+        .mode-btn:hover:not(.active) {
+            background-color: #cbd5e0;
+        }
+        
+        .mode-content {
+            display: none;
+        }
+        
+        .mode-content.active {
+            display: block;
         }
         
         .file-upload-area {
@@ -129,6 +162,81 @@
         .upload-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        }
+        
+        .url-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #serverUrl {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        #serverUrl:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        .load-btn {
+            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .load-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        }
+        
+        .example-urls {
+            margin-top: 10px;
+        }
+        
+        .example-title {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .example-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .example-url {
+            padding: 8px 15px;
+            background-color: #e6f7ff;
+            border-radius: 6px;
+            color: #1890ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .example-url:hover {
+            background-color: #1890ff;
+            color: white;
         }
         
         .file-info {
@@ -279,6 +387,27 @@
             transition: width 0.5s;
         }
         
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #4b6cb7;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .results-summary {
             display: none;
             margin-top: 30px;
@@ -375,6 +504,26 @@
             color: #475569;
         }
         
+        .example-data-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .example-data-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .container {
                 border-radius: 15px;
@@ -401,6 +550,14 @@
                 flex-direction: column;
                 gap: 20px;
             }
+            
+            .url-input-group {
+                flex-direction: column;
+            }
+            
+            .mode-selector {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -408,23 +565,58 @@
     <div class="container">
         <header>
             <h1>中英文翻译练习工具</h1>
-            <p class="subtitle">上传Excel文件，练习中文到英文翻译，并与标准答案对比</p>
+            <p class="subtitle">从服务器加载Excel文件，练习中文到英文翻译，并与标准答案对比</p>
         </header>
         
         <div class="main-content">
-            <!-- 文件上传区域 -->
+            <!-- 数据源选择区域 -->
             <div class="section">
                 <h2 class="section-title">
-                    <span>📁</span> 第一步：上传Excel文件
+                    <span>📁</span> 第一步：选择数据源
                 </h2>
-                <div class="file-upload-area" id="uploadArea">
-                    <div class="upload-icon">📄</div>
-                    <p class="upload-text">点击或拖拽Excel文件到此区域</p>
-                    <p class="upload-hint">文件格式：.xlsx 或 .xls，第一列为中文，第二列为英文翻译</p>
-                    <button class="upload-btn" id="uploadBtn">选择Excel文件</button>
-                    <input type="file" id="fileInput" accept=".xlsx,.xls">
+                
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="uploadModeBtn">上传本地Excel文件</button>
+                    <button class="mode-btn" id="urlModeBtn">从服务器URL加载</button>
                 </div>
+                
+                <!-- 上传模式 -->
+                <div class="mode-content active" id="uploadMode">
+                    <div class="file-upload-area" id="uploadArea">
+                        <div class="upload-icon">📄</div>
+                        <p class="upload-text">点击或拖拽Excel文件到此区域</p>
+                        <p class="upload-hint">文件格式：.xlsx 或 .xls，第一列为中文，第二列为英文翻译</p>
+                        <button class="upload-btn" id="uploadBtn">选择Excel文件</button>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls">
+                    </div>
+                </div>
+                
+                <!-- URL模式 -->
+                <div class="mode-content" id="urlMode">
+                        <div class="url-input-area">
+                            <p class="upload-text">输入服务器上Excel文件的URL：</p>
+                            <div class="url-input-group">
+                                <input type="text" id="serverUrl" placeholder="https://example.com/path/to/your/file.xlsx">
+                                <button class="load-btn" id="loadUrlBtn">加载文件</button>
+                            </div>
+                            <div class="example-urls">
+                                <div class="example-title">示例URL（点击使用）：</div>
+                                <div class="example-list">
+                                    <a href="#" class="example-url" data-url="https://raw.githubusercontent.com/SheetJS/sheetjs/master/demos/react/sample.xlsx">示例1: 通用数据</a>
+                                    <a href="#" class="example-url" data-url="https://docs.google.com/spreadsheets/d/1JkYVz6mCqG8qQjZqQjZqQjZqQjZqQjZqQjZqQjZqQjZqQ/export?format=xlsx">示例2: Google Sheets导出</a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                <!-- 示例数据 -->
+                <button class="example-data-btn" id="exampleDataBtn">使用示例数据开始练习（无需文件）</button>
+                
                 <div class="file-info" id="fileInfo"></div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在加载Excel文件，请稍候...</p>
+                </div>
             </div>
             
             <!-- 翻译练习区域 -->
@@ -444,7 +636,7 @@
                 </div>
                 
                 <div class="current-sentence" id="currentSentence">
-                    请先上传Excel文件
+                    请先上传Excel文件或从服务器加载
                 </div>
                 
                 <div class="translation-input-container">
@@ -466,8 +658,9 @@
             <div class="instructions">
                 <h3><span>ℹ️</span> 使用说明</h3>
                 <ul>
-                    <li>准备一个Excel文件，第一列(A列)为中文句子，第二列(B列)为对应的英文翻译</li>
-                    <li>点击上方区域上传Excel文件，系统将自动提取中文句子</li>
+                    <li><strong>模式1 - 上传本地文件</strong>：上传本地Excel文件，第一列(A列)为中文句子，第二列(B列)为对应的英文翻译</li>
+                    <li><strong>模式2 - 从服务器加载</strong>：输入服务器上Excel文件的URL，文件需支持跨域访问(CORS)</li>
+                    <li><strong>示例数据</strong>：如果没有Excel文件，可以使用示例数据立即开始练习</li>
                     <li>在输入框中输入您的英文翻译，点击"提交翻译"与标准答案对比</li>
                     <li>点击"下一个句子"继续练习，直到完成所有句子</li>
                     <li>系统会记录您的得分和正确率，帮助您评估翻译水平</li>
@@ -507,11 +700,21 @@
         let currentIndex = 0;
         let score = 0;
         let results = [];
+        let dataSource = ''; // 记录数据来源
         
         // DOM元素
+        const uploadModeBtn = document.getElementById('uploadModeBtn');
+        const urlModeBtn = document.getElementById('urlModeBtn');
+        const uploadMode = document.getElementById('uploadMode');
+        const urlMode = document.getElementById('urlMode');
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+        const serverUrlInput = document.getElementById('serverUrl');
+        const loadUrlBtn = document.getElementById('loadUrlBtn');
+        const exampleUrls = document.querySelectorAll('.example-url');
+        const exampleDataBtn = document.getElementById('exampleDataBtn');
         const fileInfo = document.getElementById('fileInfo');
+        const loading = document.getElementById('loading');
         const translationArea = document.getElementById('translationArea');
         const currentSentence = document.getElementById('currentSentence');
         const translationInput = document.getElementById('translationInput');
@@ -530,6 +733,21 @@
         const scoreText = document.getElementById('scoreText');
         const restartBtn = document.getElementById('restartBtn');
         const uploadBtn = document.getElementById('uploadBtn');
+        
+        // 模式切换
+        uploadModeBtn.addEventListener('click', () => {
+            uploadModeBtn.classList.add('active');
+            urlModeBtn.classList.remove('active');
+            uploadMode.classList.add('active');
+            urlMode.classList.remove('active');
+        });
+        
+        urlModeBtn.addEventListener('click', () => {
+            urlModeBtn.classList.add('active');
+            uploadModeBtn.classList.remove('active');
+            urlMode.classList.add('active');
+            uploadMode.classList.remove('active');
+        });
         
         // 点击上传区域触发文件选择
         uploadArea.addEventListener('click', () => fileInput.click());
@@ -552,6 +770,7 @@
             if (e.dataTransfer.files.length) {
                 const file = e.dataTransfer.files[0];
                 if (file.name.match(/\.(xlsx|xls)$/)) {
+                    dataSource = `上传文件: ${file.name}`;
                     processExcelFile(file);
                 } else {
                     alert('请上传Excel文件 (.xlsx 或 .xls 格式)');
@@ -562,82 +781,232 @@
         // 文件选择变化
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length) {
-                processExcelFile(e.target.files[0]);
+                const file = e.target.files[0];
+                dataSource = `上传文件: ${file.name}`;
+                processExcelFile(file);
             }
         });
         
-        // 处理Excel文件
+        // 从URL加载Excel文件
+        loadUrlBtn.addEventListener('click', () => {
+            const url = serverUrlInput.value.trim();
+            if (!url) {
+                alert('请输入Excel文件的URL');
+                return;
+            }
+            
+            if (!url.match(/\.(xlsx|xls)$/)) {
+                alert('URL必须指向Excel文件 (.xlsx 或 .xls 格式)');
+                return;
+            }
+            
+            dataSource = `服务器文件: ${url}`;
+            loadExcelFromUrl(url);
+        });
+        
+        // 示例URL点击
+        exampleUrls.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = link.getAttribute('data-url');
+                serverUrlInput.value = url;
+                dataSource = `示例文件: ${url}`;
+                loadExcelFromUrl(url);
+            });
+        });
+        
+        // 使用示例数据
+        exampleDataBtn.addEventListener('click', () => {
+            dataSource = '示例数据';
+            useExampleData();
+        });
+        
+        // 从URL加载Excel文件
+        async function loadExcelFromUrl(url) {
+            showLoading(true);
+            fileInfo.style.display = 'none';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                processExcelData(arrayBuffer, url);
+            } catch (error) {
+                console.error('加载Excel文件时出错:', error);
+                showLoading(false);
+                fileInfo.innerHTML = `
+                    <strong>加载失败:</strong> ${error.message}<br>
+                    可能的原因：<br>
+                    1. 文件URL不正确<br>
+                    2. 服务器未启用CORS（跨域资源共享）<br>
+                    3. 网络连接问题<br>
+                    建议：尝试使用示例数据，或下载文件后使用上传功能
+                `;
+                fileInfo.style.display = 'block';
+                fileInfo.style.backgroundColor = '#fee2e2';
+                fileInfo.style.borderLeftColor = '#ef4444';
+            }
+        }
+        
+        // 处理Excel文件（上传模式）
         function processExcelFile(file) {
+            showLoading(true);
+            fileInfo.style.display = 'none';
+            
             const reader = new FileReader();
             
             reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // 获取第一个工作表
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    // 将工作表转换为JSON
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    // 清空之前的数据
-                    chineseSentences = [];
-                    englishAnswers = [];
-                    
-                    // 提取A列和B列的数据
-                    jsonData.forEach(row => {
-                        if (row[0] && row[0].toString().trim() !== '') {
-                            chineseSentences.push(row[0].toString().trim());
-                            englishAnswers.push(row[1] ? row[1].toString().trim() : '');
-                        }
-                    });
-                    
-                    // 检查是否成功提取数据
-                    if (chineseSentences.length === 0) {
-                        fileInfo.innerHTML = `<strong>错误:</strong> 没有在Excel文件的A列找到中文句子。请确保第一列是中文句子。`;
-                        fileInfo.style.display = 'block';
-                        fileInfo.style.backgroundColor = '#fee2e2';
-                        fileInfo.style.borderLeftColor = '#ef4444';
-                        return;
-                    }
-                    
-                    // 显示文件信息
-                    fileInfo.innerHTML = `
-                        <strong>文件加载成功！</strong><br>
-                        找到 ${chineseSentences.length} 个中文句子<br>
-                        文件名: ${file.name} (${(file.size / 1024).toFixed(1)} KB)
-                    `;
-                    fileInfo.style.display = 'block';
-                    fileInfo.style.backgroundColor = '#e6f7ff';
-                    fileInfo.style.borderLeftColor = '#1890ff';
-                    
-                    // 重置练习状态
-                    currentIndex = 0;
-                    score = 0;
-                    results = [];
-                    
-                    // 显示翻译区域
-                    translationArea.style.display = 'block';
-                    resultArea.style.display = 'none';
-                    resultsSummary.style.display = 'none';
-                    
-                    // 更新进度显示
-                    updateProgress();
-                    
-                    // 显示第一个句子
-                    showCurrentSentence();
-                    
-                } catch (error) {
-                    console.error('解析Excel文件时出错:', error);
-                    fileInfo.innerHTML = `<strong>错误:</strong> 解析Excel文件时出错。请确保文件格式正确。`;
-                    fileInfo.style.display = 'block';
-                    fileInfo.style.backgroundColor = '#fee2e2';
-                    fileInfo.style.borderLeftColor = '#ef4444';
-                }
+                processExcelData(e.target.result, file.name);
+            };
+            
+            reader.onerror = function() {
+                showLoading(false);
+                fileInfo.innerHTML = `<strong>错误:</strong> 读取文件时出错`;
+                fileInfo.style.display = 'block';
+                fileInfo.style.backgroundColor = '#fee2e2';
+                fileInfo.style.borderLeftColor = '#ef4444';
             };
             
             reader.readAsArrayBuffer(file);
+        }
+        
+        // 处理Excel数据（通用函数）
+        function processExcelData(data, sourceName) {
+            try {
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // 获取第一个工作表
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                
+                // 将工作表转换为JSON
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                // 清空之前的数据
+                chineseSentences = [];
+                englishAnswers = [];
+                
+                // 提取A列和B列的数据
+                jsonData.forEach((row, index) => {
+                    if (row[0] && row[0].toString().trim() !== '') {
+                        chineseSentences.push(row[0].toString().trim());
+                        englishAnswers.push(row[1] ? row[1].toString().trim() : '');
+                    }
+                });
+                
+                // 检查是否成功提取数据
+                if (chineseSentences.length === 0) {
+                    showLoading(false);
+                    fileInfo.innerHTML = `<strong>错误:</strong> 没有在Excel文件的A列找到中文句子。请确保第一列是中文句子。`;
+                    fileInfo.style.display = 'block';
+                    fileInfo.style.backgroundColor = '#fee2e2';
+                    fileInfo.style.borderLeftColor = '#ef4444';
+                    return;
+                }
+                
+                // 显示文件信息
+                showLoading(false);
+                fileInfo.innerHTML = `
+                    <strong>数据加载成功！</strong><br>
+                    来源: ${dataSource}<br>
+                    找到 ${chineseSentences.length} 个中文句子<br>
+                `;
+                fileInfo.style.display = 'block';
+                fileInfo.style.backgroundColor = '#e6f7ff';
+                fileInfo.style.borderLeftColor = '#1890ff';
+                
+                // 重置练习状态
+                currentIndex = 0;
+                score = 0;
+                results = [];
+                
+                // 显示翻译区域
+                translationArea.style.display = 'block';
+                resultArea.style.display = 'none';
+                resultsSummary.style.display = 'none';
+                
+                // 更新进度显示
+                updateProgress();
+                
+                // 显示第一个句子
+                showCurrentSentence();
+                
+            } catch (error) {
+                console.error('解析Excel文件时出错:', error);
+                showLoading(false);
+                fileInfo.innerHTML = `
+                    <strong>错误:</strong> 解析Excel文件时出错。<br>
+                    请确保文件格式正确，且包含A列（中文）和B列（英文）数据。
+                `;
+                fileInfo.style.display = 'block';
+                fileInfo.style.backgroundColor = '#fee2e2';
+                fileInfo.style.borderLeftColor = '#ef4444';
+            }
+        }
+        
+        // 使用示例数据
+        function useExampleData() {
+            // 示例数据
+            chineseSentences = [
+                "你好，世界！",
+                "今天的天气非常好。",
+                "我喜欢学习新的语言。",
+                "人工智能正在改变世界。",
+                "她每天早上都去公园跑步。",
+                "这个项目将在下个月完成。",
+                "请把盐递给我。",
+                "他是一位非常有经验的工程师。",
+                "我们计划明年去日本旅行。",
+                "这个问题比我想象的要复杂。"
+            ];
+            
+            englishAnswers = [
+                "Hello, world!",
+                "The weather is very nice today.",
+                "I like learning new languages.",
+                "Artificial intelligence is changing the world.",
+                "She goes running in the park every morning.",
+                "This project will be completed next month.",
+                "Please pass me the salt.",
+                "He is a very experienced engineer.",
+                "We plan to travel to Japan next year.",
+                "This problem is more complicated than I thought."
+            ];
+            
+            // 显示文件信息
+            fileInfo.innerHTML = `
+                <strong>示例数据加载成功！</strong><br>
+                来源: ${dataSource}<br>
+                找到 ${chineseSentences.length} 个中文句子<br>
+                提示: 这是示例数据。要使用自己的数据，请上传Excel文件或输入URL。
+            `;
+            fileInfo.style.display = 'block';
+            fileInfo.style.backgroundColor = '#e6f7ff';
+            fileInfo.style.borderLeftColor = '#1890ff';
+            
+            // 重置练习状态
+            currentIndex = 0;
+            score = 0;
+            results = [];
+            
+            // 显示翻译区域
+            translationArea.style.display = 'block';
+            resultArea.style.display = 'none';
+            resultsSummary.style.display = 'none';
+            
+            // 更新进度显示
+            updateProgress();
+            
+            // 显示第一个句子
+            showCurrentSentence();
+        }
+        
+        // 显示加载状态
+        function showLoading(isLoading) {
+            loading.style.display = isLoading ? 'block' : 'none';
         }
         
         // 显示当前句子
@@ -786,7 +1155,10 @@
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
             // 显示示例句子
-            currentSentence.textContent = "欢迎使用中英文翻译练习工具！请上传Excel文件开始练习。";
+            currentSentence.textContent = "欢迎使用中英文翻译练习工具！请选择数据源开始练习。";
+            
+            // 设置默认URL示例
+            serverUrlInput.value = "https://raw.githubusercontent.com/SheetJS/sheetjs/master/demos/react/sample.xlsx";
         });
     </script>
 </body>
