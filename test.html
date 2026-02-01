@@ -321,6 +321,15 @@
             color: #b71c1c;
         }
         
+        .technical-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 600px) {
             .button-group {
                 flex-direction: column;
@@ -358,6 +367,7 @@
                 </div>
                 
                 <button class="btn" id="loadFileBtn">加载Excel文件</button>
+                <button class="btn btn-secondary" id="useDemoBtn">使用演示数据</button>
                 
                 <div class="file-info" id="fileInfo"></div>
                 <div class="loading" id="loading">
@@ -365,6 +375,16 @@
                     <p>正在加载Excel文件，请稍候...</p>
                 </div>
                 <div class="error-message" id="errorMessage"></div>
+                
+                <div class="technical-info">
+                    <p><strong>技术说明：</strong>由于浏览器安全限制，直接从GitHub页面读取加密Excel文件会遇到跨域和密码保护问题。此工具使用模拟数据进行演示。</p>
+                    <p>实际部署时，您需要：</p>
+                    <ol>
+                        <li>将Excel文件放在支持CORS的服务器上</li>
+                        <li>使用服务器端API处理文件读取和写入</li>
+                        <li>或使用不加密的Excel文件</li>
+                    </ol>
+                </div>
             </div>
             
             <div class="section translation-area" id="translationArea">
@@ -413,6 +433,7 @@
                 </div>
                 
                 <button class="btn add-btn" id="addBtn">添加到词汇库</button>
+                <button class="btn btn-secondary" id="downloadBtn">下载Excel文件</button>
                 <div id="addResult" class="file-info" style="display: none;"></div>
             </div>
         </div>
@@ -427,6 +448,7 @@
         
         // DOM元素
         const loadFileBtn = document.getElementById('loadFileBtn');
+        const useDemoBtn = document.getElementById('useDemoBtn');
         const filePassword = document.getElementById('filePassword');
         const fileInfo = document.getElementById('fileInfo');
         const loading = document.getElementById('loading');
@@ -444,7 +466,22 @@
         const newChinese = document.getElementById('newChinese');
         const newEnglish = document.getElementById('newEnglish');
         const addBtn = document.getElementById('addBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
         const addResult = document.getElementById('addResult');
+        
+        // 演示数据
+        const demoData = [
+            { chinese: "你好", english: "Hello" },
+            { chinese: "谢谢", english: "Thank you" },
+            { chinese: "再见", english: "Goodbye" },
+            { chinese: "我爱你", english: "I love you" },
+            { chinese: "今天天气很好", english: "The weather is nice today" },
+            { chinese: "我喜欢学习英语", english: "I like learning English" },
+            { chinese: "你叫什么名字", english: "What is your name" },
+            { chinese: "我来自中国", english: "I am from China" },
+            { chinese: "你会说中文吗", english: "Can you speak Chinese" },
+            { chinese: "这个多少钱", english: "How much is this" }
+        ];
         
         // 加载Excel文件
         loadFileBtn.addEventListener('click', async () => {
@@ -458,49 +495,75 @@
             hideError();
             
             try {
-                // 获取Excel文件
+                // 尝试获取Excel文件
                 const response = await fetch(excelUrl);
                 if (!response.ok) throw new Error('无法获取Excel文件');
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
                 
-                // 读取Excel文件
-                const workbook = XLSX.read(data, {
-                    type: 'array',
-                    password: password,
-                    cellText: false,
-                    cellDates: true
-                });
-                
-                // 获取第一个工作表
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                
-                // 转换为JSON
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                // 过滤空行并存储数据
-                translationData = jsonData
-                    .filter(row => row.length >= 2 && row[0] && row[1])
-                    .map(row => ({ chinese: row[0], english: row[1] }));
-                
-                if (translationData.length === 0) {
-                    throw new Error('Excel文件中没有找到有效数据');
+                // 尝试读取Excel文件
+                try {
+                    const workbook = XLSX.read(data, {
+                        type: 'array',
+                        password: password
+                    });
+                    
+                    // 获取第一个工作表
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    // 转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    // 过滤空行并存储数据
+                    translationData = jsonData
+                        .filter(row => row.length >= 2 && row[0] && row[1])
+                        .map(row => ({ chinese: row[0], english: row[1] }));
+                    
+                    if (translationData.length === 0) {
+                        throw new Error('Excel文件中没有找到有效数据');
+                    }
+                    
+                    // 显示文件信息
+                    fileInfo.textContent = `成功加载 ${translationData.length} 条翻译数据`;
+                    fileInfo.style.display = 'block';
+                    
+                    // 初始化练习
+                    initPractice();
+                    
+                } catch (excelError) {
+                    // 如果Excel读取失败，使用演示数据
+                    console.error('读取Excel文件时出错:', excelError);
+                    showError('无法读取加密的Excel文件。已使用演示数据。');
+                    
+                    translationData = [...demoData];
+                    fileInfo.textContent = `使用演示数据（共 ${translationData.length} 条）`;
+                    fileInfo.style.display = 'block';
+                    
+                    initPractice();
                 }
-                
-                // 显示文件信息
-                fileInfo.textContent = `成功加载 ${translationData.length} 条翻译数据`;
-                fileInfo.style.display = 'block';
-                
-                // 初始化练习
-                initPractice();
                 
             } catch (error) {
                 console.error('加载文件时出错:', error);
-                showError(`加载失败: ${error.message || '请检查密码和文件格式'}`);
+                showError('无法从服务器加载Excel文件。已使用演示数据。');
+                
+                // 使用演示数据
+                translationData = [...demoData];
+                fileInfo.textContent = `使用演示数据（共 ${translationData.length} 条）`;
+                fileInfo.style.display = 'block';
+                
+                initPractice();
             } finally {
                 hideLoading();
             }
+        });
+        
+        // 使用演示数据
+        useDemoBtn.addEventListener('click', () => {
+            translationData = [...demoData];
+            fileInfo.textContent = `使用演示数据（共 ${translationData.length} 条）`;
+            fileInfo.style.display = 'block';
+            initPractice();
         });
         
         // 初始化练习
@@ -511,125 +574,3 @@
             updateProgress();
             showNextSentence();
         }
-        
-        // 显示下一个句子
-        function showNextSentence() {
-            if (currentIndex >= translationData.length) {
-                // 练习完成
-                currentSentence.textContent = '恭喜！您已完成所有练习！';
-                translationInput.style.display = 'none';
-                submitBtn.style.display = 'none';
-                nextBtn.style.display = 'none';
-                return;
-            }
-            
-            const current = translationData[currentIndex];
-            currentSentence.textContent = current.chinese;
-            translationInput.value = '';
-            resultArea.style.display = 'none';
-            translationInput.focus();
-        }
-        
-        // 提交翻译
-        submitBtn.addEventListener('click', () => {
-            const userTranslation = translationInput.value.trim();
-            if (!userTranslation) {
-                showError('请输入翻译内容');
-                return;
-            }
-            
-            const correctTranslation = translationData[currentIndex].english;
-            const isCorrect = userTranslation.toLowerCase() === correctTranslation.toLowerCase();
-            
-            // 更新分数
-            if (isCorrect) score++;
-            updateProgress();
-            
-            // 显示结果
-            resultArea.innerHTML = `
-                <div class="result-title">${isCorrect ? '✅ 正确！' : '❌ 不正确'}</div>
-                <p>您的翻译: <span class="user-translation">${userTranslation}</span></p>
-                <p>正确翻译: <span class="correct-translation">${correctTranslation}</span></p>
-            `;
-            
-            resultArea.className = isCorrect ? 'result-area correct' : 'result-area incorrect';
-            resultArea.style.display = 'block';
-        });
-        
-        // 下一个句子
-        nextBtn.addEventListener('click', () => {
-            currentIndex++;
-            updateProgress();
-            showNextSentence();
-        });
-        
-        // 更新进度
-        function updateProgress() {
-            currentIndexEl.textContent = currentIndex;
-            totalSentencesEl.textContent = translationData.length;
-            scoreEl.textContent = score;
-            
-            const progress = currentIndex > 0 ? (currentIndex / translationData.length) * 100 : 0;
-            progressFill.style.width = `${progress}%`;
-        }
-        
-        // 添加新词汇
-        addBtn.addEventListener('click', () => {
-            const chinese = newChinese.value.trim();
-            const english = newEnglish.value.trim();
-            
-            if (!chinese || !english) {
-                showError('请填写中文和英文内容');
-                return;
-            }
-            
-            // 添加到当前数据
-            translationData.push({ chinese, english });
-            
-            // 显示成功消息
-            addResult.textContent = `成功添加: ${chinese} → ${english}`;
-            addResult.style.display = 'block';
-            
-            // 清空输入框
-            newChinese.value = '';
-            newEnglish.value = '';
-            
-            // 更新总数显示
-            totalSentencesEl.textContent = translationData.length;
-            
-            // 3秒后隐藏消息
-            setTimeout(() => {
-                addResult.style.display = 'none';
-            }, 3000);
-        });
-        
-        // 辅助函数
-        function showLoading() {
-            loading.style.display = 'flex';
-        }
-        
-        function hideLoading() {
-            loading.style.display = 'none';
-        }
-        
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-        }
-        
-        function hideError() {
-            errorMessage.style.display = 'none';
-        }
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            // 示例：模拟加载少量数据
-            translationData = [
-                { chinese: "你好", english: "Hello" },
-                { chinese: "谢谢", english: "Thank you" },
-                { chinese: "再见", english: "Goodbye" }
-            ];
-        });
-    </script>
-</body>
-</html>
