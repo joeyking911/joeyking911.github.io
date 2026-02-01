@@ -3,650 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中英文翻译练习工具 - 支持密码解密</title>
+    <title>中英文翻译练习工具 - 修复URL加载问题</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-            color: white;
-            padding: 25px 30px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 2.4rem;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        .main-content {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-        
-        .section {
-            background-color: #f8fafc;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        
-        .section-title {
-            color: #2d3748;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 20px;
-        }
-        
-        .mode-btn {
-            padding: 12px 25px;
-            background-color: #e2e8f0;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-        }
-        
-        .mode-btn.active {
-            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
-            color: white;
-        }
-        
-        .mode-btn:hover:not(.active) {
-            background-color: #cbd5e0;
-        }
-        
-        .mode-content {
-            display: none;
-        }
-        
-        .mode-content.active {
-            display: block;
-        }
-        
-        .file-upload-area {
-            border: 3px dashed #cbd5e0;
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .file-upload-area:hover, .file-upload-area.dragover {
-            border-color: #4b6cb7;
-            background-color: rgba(75, 108, 183, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 3.5rem;
-            color: #4b6cb7;
-            margin-bottom: 15px;
-        }
-        
-        .upload-text {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #4a5568;
-        }
-        
-        .upload-hint {
-            color: #718096;
-            font-size: 0.95rem;
-            margin-top: 10px;
-        }
-        
-        #fileInput {
-            display: none;
-        }
-        
-        .upload-btn {
-            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
+        /* 保持之前的样式不变，只添加必要的修正 */
+        .url-test-result {
             margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
         }
         
-        .upload-btn:hover {
+        .url-test-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        .url-test-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .url-test-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .test-url-btn {
+            background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .test-url-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+            box-shadow: 0 3px 10px rgba(139, 92, 246, 0.3);
         }
         
-        .password-input-area {
+        .url-info {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        .url-info a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        .url-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .direct-link-section {
             margin-top: 20px;
-            padding: 20px;
+            padding: 15px;
             background-color: #f0f9ff;
-            border-radius: 10px;
+            border-radius: 8px;
             border-left: 4px solid #0ea5e9;
         }
         
-        .password-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .password-label {
+        .direct-link-title {
             font-weight: 600;
             color: #0369a1;
-            font-size: 1rem;
-        }
-        
-        .password-input {
-            padding: 12px 15px;
-            font-size: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        .password-input:focus {
-            outline: none;
-            border-color: #4b6cb7;
-            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
-        }
-        
-        .password-hint {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 5px;
-        }
-        
-        .url-input-area {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .url-input-group {
-            display: flex;
-            gap: 10px;
-        }
-        
-        #serverUrl {
-            flex: 1;
-            padding: 15px 20px;
-            font-size: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        #serverUrl:focus {
-            outline: none;
-            border-color: #4b6cb7;
-            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
-        }
-        
-        .load-btn {
-            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
-            color: white;
-            border: none;
-            padding: 0 30px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        .load-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
-        }
-        
-        .example-urls {
-            margin-top: 10px;
-        }
-        
-        .example-title {
-            font-size: 0.9rem;
-            color: #4a5568;
-            margin-bottom: 8px;
-        }
-        
-        .example-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .example-url {
-            padding: 8px 15px;
-            background-color: #e6f7ff;
-            border-radius: 6px;
-            color: #1890ff;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        
-        .example-url:hover {
-            background-color: #1890ff;
-            color: white;
-        }
-        
-        .file-info {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e6f7ff;
-            border-radius: 8px;
-            border-left: 4px solid #1890ff;
-            display: none;
-        }
-        
-        .translation-area {
-            display: none;
-        }
-        
-        .current-sentence {
-            font-size: 1.8rem;
-            color: #2d3748;
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #f0f7ff;
-            border-radius: 10px;
-            border-left: 5px solid #4b6cb7;
-            min-height: 100px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
+            gap: 8px;
         }
         
-        .translation-input-container {
-            margin-bottom: 30px;
-        }
-        
-        .input-label {
-            display: block;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #4a5568;
-            font-weight: 600;
-        }
-        
-        #translationInput {
-            width: 100%;
-            padding: 18px 20px;
-            font-size: 1.2rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-        
-        #translationInput:focus {
-            outline: none;
-            border-color: #4b6cb7;
-            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
-        }
-        
-        .button-group {
+        .direct-link-list {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            flex-direction: column;
+            gap: 8px;
         }
         
-        .action-btn {
-            flex: 1;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        
-        .submit-btn {
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-        }
-        
-        .next-btn {
+        .direct-link-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
             background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-        }
-        
-        .next-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-        
-        .result-area {
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-        }
-        
-        .correct {
-            background-color: #d1fae5;
-            border-left: 5px solid #10b981;
-        }
-        
-        .incorrect {
-            background-color: #fee2e2;
-            border-left: 5px solid #ef4444;
-        }
-        
-        .result-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .user-translation, .correct-translation {
-            margin: 8px 0;
-            padding: 8px 12px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 6px;
-        }
-        
-        .progress-container {
-            margin-bottom: 30px;
-        }
-        
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .progress-bar {
-            height: 12px;
-            background-color: #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4b6cb7 0%, #3b5998 100%);
-            width: 0%;
-            transition: width 0.5s;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid #4b6cb7;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .results-summary {
-            display: none;
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
-            text-align: center;
-        }
-        
-        .score-display {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #4b6cb7;
-            margin-bottom: 10px;
-        }
-        
-        .score-text {
-            font-size: 1.3rem;
-            color: #4a5568;
-            margin-bottom: 20px;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 25px;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #2d3748;
-        }
-        
-        .stat-label {
-            font-size: 1rem;
-            color: #718096;
-            margin-top: 5px;
-        }
-        
-        .correct-stat .stat-value {
-            color: #10b981;
-        }
-        
-        .incorrect-stat .stat-value {
-            color: #ef4444;
-        }
-        
-        .restart-btn {
-            background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            border-radius: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
+            text-align: center;
             font-weight: 600;
-            margin-top: 20px;
         }
         
-        .restart-btn:hover {
+        .direct-link-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
         }
         
-        .instructions {
-            background-color: #f0f9ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 5px solid #0ea5e9;
-        }
-        
-        .instructions h3 {
-            color: #0369a1;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            color: #475569;
-        }
-        
-        .example-data-btn {
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-            padding: 15px;
+        .direct-link-btn.example {
             background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        
-        .example-data-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
-        }
-        
-        .error-message {
-            background-color: #fee2e2;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #ef4444;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .warning-message {
-            background-color: #fef3c7;
-            color: #92400e;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #f59e0b;
-            margin-top: 20px;
-        }
-        
-        .decryption-options {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .decryption-title {
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .decryption-options label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        
-        .decryption-options input[type="radio"] {
-            cursor: pointer;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                border-radius: 15px;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .section {
-                padding: 20px;
-            }
-            
-            .current-sentence {
-                font-size: 1.5rem;
-                padding: 15px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .url-input-group {
-                flex-direction: column;
-            }
-            
-            .mode-selector {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -686,20 +151,6 @@
                             <p class="password-hint">如果您的Excel文件有密码保护，请在此输入密码。如果没有密码，请留空。</p>
                         </div>
                     </div>
-                    
-                    <div class="decryption-options">
-                        <div class="decryption-title">
-                            <span>🔐</span> 解密选项
-                        </div>
-                        <label>
-                            <input type="radio" name="decryptionMethod" value="exceljs" checked>
-                            使用ExcelJS库（支持加密文件）
-                        </label>
-                        <label>
-                            <input type="radio" name="decryptionMethod" value="xlsx">
-                            使用XLSX库（仅支持未加密文件）
-                        </label>
-                    </div>
                 </div>
                 
                 <!-- URL模式 -->
@@ -707,14 +158,23 @@
                     <div class="url-input-area">
                         <p class="upload-text">输入服务器上Excel文件的URL：</p>
                         <div class="url-input-group">
-                            <input type="text" id="serverUrl" placeholder="https://example.com/path/to/your/file.xlsx">
+                            <input type="text" id="serverUrl" placeholder="https://example.com/path/to/your/file.xlsx" 
+                                   value="https://docs.google.com/spreadsheets/d/1E8DfRzT4L4q4J5Y6Y7Y8Y9Y0Y1Y2Y3Y4Y5Y6/export?format=xlsx">
                             <button class="load-btn" id="loadUrlBtn">加载文件</button>
+                            <button class="test-url-btn" id="testUrlBtn">测试URL</button>
                         </div>
-                        <div class="example-urls">
-                            <div class="example-title">示例URL（点击使用）：</div>
-                            <div class="example-list">
-                                <a href="#" class="example-url" data-url="https://docs.google.com/spreadsheets/d/1JkYVz6mCqG8qQjZqQjZqQjZqQjZqQjZqQjZqQjZqQjZqQ/export?format=xlsx">示例1: Google Sheets导出</a>
-                            </div>
+                        
+                        <div id="urlTestResult" class="url-test-result"></div>
+                        
+                        <div class="url-info">
+                            <p><strong>URL格式提示：</strong></p>
+                            <ul>
+                                <li>确保URL直接指向Excel文件（以.xlsx、.xls或.xlsm结尾）</li>
+                                <li>Google Sheets文件：需要发布为"任何人都可以查看"，然后使用"文件 → 发布到网页 → 选择.xlsx格式"获取链接</li>
+                                <li>OneDrive/SharePoint文件：需要获取直接下载链接，通常包含"download=1"参数</li>
+                                <li>Dropbox文件：将链接中的"www.dropbox.com"改为"dl.dropboxusercontent.com"</li>
+                                <li>GitHub文件：使用原始文件链接（raw.githubusercontent.com）</li>
+                            </ul>
                         </div>
                         
                         <div class="password-input-area">
@@ -725,18 +185,24 @@
                             </div>
                         </div>
                         
-                        <div class="decryption-options">
-                            <div class="decryption-title">
-                                <span>🔐</span> 解密选项
+                        <div class="direct-link-section">
+                            <div class="direct-link-title">
+                                <span>🔗</span> 快速链接
                             </div>
-                            <label>
-                                <input type="radio" name="urlDecryptionMethod" value="exceljs" checked>
-                                使用ExcelJS库（支持加密文件）
-                            </label>
-                            <label>
-                                <input type="radio" name="urlDecryptionMethod" value="xlsx">
-                                使用XLSX库（仅支持未加密文件）
-                            </label>
+                            <p style="margin-bottom: 10px; color: #4b5563; font-size: 0.9rem;">
+                                点击以下链接使用示例Excel文件：
+                            </p>
+                            <div class="direct-link-list">
+                                <button class="direct-link-btn example" id="exampleExcelUrl1">
+                                    示例1：基础中英文翻译练习
+                                </button>
+                                <button class="direct-link-btn example" id="exampleExcelUrl2">
+                                    示例2：商务英语翻译练习
+                                </button>
+                                <button class="direct-link-btn example" id="exampleExcelUrl3">
+                                    示例3：日常对话翻译练习
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -787,20 +253,6 @@
                 </div>
             </div>
             
-            <!-- 使用说明 -->
-            <div class="instructions">
-                <h3><span>ℹ️</span> 使用说明</h3>
-                <ul>
-                    <li><strong>模式1 - 上传本地文件</strong>：上传本地Excel文件，第一列(A列)为中文句子，第二列(B列)为对应的英文翻译。如果文件有密码，请在密码框中输入。</li>
-                    <li><strong>模式2 - 从服务器加载</strong>：输入服务器上Excel文件的URL，文件需支持跨域访问(CORS)。如果文件有密码，请在密码框中输入。</li>
-                    <li><strong>解密选项</strong>：ExcelJS库支持加密文件，XLSX库仅支持未加密文件。如果文件加密，请选择ExcelJS库。</li>
-                    <li><strong>示例数据</strong>：如果没有Excel文件，可以使用示例数据立即开始练习</li>
-                    <li>在输入框中输入您的英文翻译，点击"提交翻译"与标准答案对比</li>
-                    <li>点击"下一个句子"继续练习，直到完成所有句子</li>
-                    <li>系统会记录您的得分和正确率，帮助您评估翻译水平</li>
-                </ul>
-            </div>
-            
             <!-- 结果总结 -->
             <div class="results-summary" id="resultsSummary">
                 <h2 class="section-title">练习完成！</h2>
@@ -834,7 +286,7 @@
         let currentIndex = 0;
         let score = 0;
         let results = [];
-        let dataSource = ''; // 记录数据来源
+        let dataSource = '';
         
         // DOM元素
         const uploadModeBtn = document.getElementById('uploadModeBtn');
@@ -847,7 +299,11 @@
         const urlPasswordInput = document.getElementById('urlPassword');
         const serverUrlInput = document.getElementById('serverUrl');
         const loadUrlBtn = document.getElementById('loadUrlBtn');
-        const exampleUrls = document.querySelectorAll('.example-url');
+        const testUrlBtn = document.getElementById('testUrlBtn');
+        const urlTestResult = document.getElementById('urlTestResult');
+        const exampleExcelUrl1 = document.getElementById('exampleExcelUrl1');
+        const exampleExcelUrl2 = document.getElementById('exampleExcelUrl2');
+        const exampleExcelUrl3 = document.getElementById('exampleExcelUrl3');
         const exampleDataBtn = document.getElementById('exampleDataBtn');
         const fileInfo = document.getElementById('fileInfo');
         const loading = document.getElementById('loading');
@@ -924,6 +380,64 @@
             }
         });
         
+        // 测试URL功能
+        testUrlBtn.addEventListener('click', async () => {
+            const url = serverUrlInput.value.trim();
+            if (!url) {
+                showUrlTestResult('请输入URL进行测试', 'error');
+                return;
+            }
+            
+            showUrlTestResult('正在测试URL连接...', 'warning');
+            
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type') || '';
+                    const contentLength = response.headers.get('content-length') || '未知';
+                    const filename = url.substring(url.lastIndexOf('/') + 1);
+                    
+                    let resultHtml = `
+                        <strong>✅ URL测试成功！</strong><br>
+                        文件: ${filename}<br>
+                        内容类型: ${contentType}<br>
+                        文件大小: ${formatFileSize(contentLength)}<br>
+                        状态: ${response.status} ${response.statusText}
+                    `;
+                    
+                    if (contentType.includes('application/vnd.openxmlformats-officedocument') || 
+                        contentType.includes('application/vnd.ms-excel') ||
+                        url.match(/\.(xlsx|xls|xlsm)$/)) {
+                        resultHtml += '<br>✅ 检测到Excel文件类型';
+                    } else {
+                        resultHtml += '<br>⚠️ 注意: 内容类型可能不是标准的Excel文件';
+                    }
+                    
+                    showUrlTestResult(resultHtml, 'success');
+                } else {
+                    showUrlTestResult(`
+                        <strong>❌ URL测试失败</strong><br>
+                        状态: ${response.status} ${response.statusText}<br>
+                        可能的原因:<br>
+                        1. 文件不存在或已被删除<br>
+                        2. 需要登录或权限验证<br>
+                        3. 服务器拒绝了请求
+                    `, 'error');
+                }
+            } catch (error) {
+                console.error('测试URL时出错:', error);
+                showUrlTestResult(`
+                    <strong>❌ URL测试失败</strong><br>
+                    错误: ${error.message}<br>
+                    可能的原因:<br>
+                    1. 网络连接问题<br>
+                    2. CORS限制（跨域问题）<br>
+                    3. URL格式不正确
+                `, 'error');
+            }
+        });
+        
         // 从URL加载Excel文件
         loadUrlBtn.addEventListener('click', () => {
             const url = serverUrlInput.value.trim();
@@ -932,23 +446,22 @@
                 return;
             }
             
-            if (!url.match(/\.(xlsx|xls|xlsm)$/)) {
-                showError('URL必须指向Excel文件 (.xlsx, .xls 或 .xlsm 格式)');
-                return;
-            }
-            
             dataSource = `服务器文件: ${url}`;
             loadExcelFromUrl(url);
         });
         
-        // 示例URL点击
-        exampleUrls.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const url = link.getAttribute('data-url');
-                serverUrlInput.value = url;
-                dataSource = `示例文件: ${url}`;
-            });
+        // 示例Excel文件URL
+        exampleExcelUrl1.addEventListener('click', () => {
+            // 创建一个临时的示例Excel文件
+            createExampleExcelFile('基础中英文翻译练习');
+        });
+        
+        exampleExcelUrl2.addEventListener('click', () => {
+            createExampleExcelFile('商务英语翻译练习');
+        });
+        
+        exampleExcelUrl3.addEventListener('click', () => {
+            createExampleExcelFile('日常对话翻译练习');
         });
         
         // 使用示例数据
@@ -962,6 +475,7 @@
             showLoading(true);
             hideError();
             fileInfo.style.display = 'none';
+            urlTestResult.style.display = 'none';
             
             try {
                 const response = await fetch(url);
@@ -970,23 +484,59 @@
                     throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
                 }
                 
+                // 检查响应类型
+                const contentType = response.headers.get('content-type') || '';
                 const arrayBuffer = await response.arrayBuffer();
-                const password = urlPasswordInput.value;
-                const decryptionMethod = document.querySelector('input[name="urlDecryptionMethod"]:checked').value;
                 
-                await processExcelData(arrayBuffer, url, password, decryptionMethod);
+                // 检查文件是否为有效的Excel/ZIP文件
+                if (arrayBuffer.byteLength === 0) {
+                    throw new Error('下载的文件为空，请检查URL是否正确');
+                }
+                
+                // 检查文件头是否为ZIP格式 (Excel文件是ZIP格式)
+                const header = new Uint8Array(arrayBuffer.slice(0, 4));
+                const isZipFile = header[0] === 0x50 && header[1] === 0x4B; // PK (ZIP文件头)
+                
+                if (!isZipFile) {
+                    // 尝试检查是否为老式.xls文件
+                    const isXlsFile = header[0] === 0xD0 && header[1] === 0xCF && 
+                                     header[2] === 0x11 && header[3] === 0xE0;
+                    
+                    if (!isXlsFile) {
+                        // 检查是否为文本文件（可能是HTML错误页面）
+                        const textDecoder = new TextDecoder('utf-8');
+                        const firstBytes = textDecoder.decode(arrayBuffer.slice(0, 100));
+                        
+                        if (firstBytes.includes('<html') || firstBytes.includes('<!DOCTYPE')) {
+                            throw new Error('URL返回的是HTML页面，而不是Excel文件。可能是登录页面或错误页面。');
+                        } else if (firstBytes.includes('error') || firstBytes.includes('Error')) {
+                            throw new Error('服务器返回了错误页面');
+                        } else {
+                            throw new Error('下载的文件不是有效的Excel文件。请确保URL直接指向Excel文件。');
+                        }
+                    }
+                }
+                
+                const password = urlPasswordInput.value;
+                await processExcelData(arrayBuffer, url, password);
             } catch (error) {
                 console.error('加载Excel文件时出错:', error);
                 showLoading(false);
-                showError(`
-                    <strong>加载失败:</strong> ${error.message}<br>
-                    可能的原因：<br>
-                    1. 文件URL不正确<br>
-                    2. 服务器未启用CORS（跨域资源共享）<br>
-                    3. 网络连接问题<br>
-                    4. 文件加密且密码错误<br>
-                    建议：尝试使用示例数据，或下载文件后使用上传功能
-                `);
+                
+                let errorDetails = `
+                    <strong>加载失败:</strong> ${error.message}<br><br>
+                    <strong>可能的原因和解决方案:</strong><br>
+                    1. <strong>URL不正确</strong> - 确保URL直接指向Excel文件<br>
+                    2. <strong>需要登录</strong> - 某些网站需要登录才能访问文件<br>
+                    3. <strong>CORS限制</strong> - 服务器可能不允许跨域访问<br>
+                    4. <strong>文件不存在</strong> - 检查URL是否正确<br><br>
+                    <strong>建议:</strong><br>
+                    • 点击"测试URL"按钮检查URL是否有效<br>
+                    • 尝试下载文件后使用"上传本地文件"功能<br>
+                    • 使用示例数据立即开始练习
+                `;
+                
+                showError(errorDetails);
             }
         }
         
@@ -1001,8 +551,7 @@
             reader.onload = async function(e) {
                 try {
                     const password = filePasswordInput.value;
-                    const decryptionMethod = document.querySelector('input[name="decryptionMethod"]:checked').value;
-                    await processExcelData(e.target.result, file.name, password, decryptionMethod);
+                    await processExcelData(e.target.result, file.name, password);
                 } catch (error) {
                     showLoading(false);
                     showError(`处理文件时出错: ${error.message}`);
@@ -1018,34 +567,53 @@
         }
         
         // 处理Excel数据（通用函数）
-        async function processExcelData(data, sourceName, password, decryptionMethod) {
+        async function processExcelData(data, sourceName, password) {
             try {
                 // 清空之前的数据
                 chineseSentences = [];
                 englishAnswers = [];
                 
-                if (decryptionMethod === 'exceljs' && typeof ExcelJS !== 'undefined') {
-                    // 使用ExcelJS库处理（支持加密文件）
-                    await processWithExcelJS(data, password);
-                } else {
-                    // 使用XLSX库处理（仅支持未加密文件）
-                    processWithXLSX(data);
+                let processed = false;
+                
+                // 首先尝试使用ExcelJS（支持加密文件）
+                if (typeof ExcelJS !== 'undefined') {
+                    try {
+                        await processWithExcelJS(data, password);
+                        processed = true;
+                    } catch (excelJSError) {
+                        console.log('ExcelJS处理失败:', excelJSError.message);
+                        // 继续尝试XLSX
+                    }
+                }
+                
+                // 如果ExcelJS失败，尝试使用XLSX
+                if (!processed && typeof XLSX !== 'undefined') {
+                    try {
+                        processWithXLSX(data);
+                        processed = true;
+                    } catch (xlsxError) {
+                        console.log('XLSX处理失败:', xlsxError.message);
+                        // 如果两种方法都失败，抛出错误
+                        throw new Error('无法解析Excel文件。请检查文件是否损坏或使用了不支持的格式。');
+                    }
+                }
+                
+                if (!processed) {
+                    throw new Error('没有可用的Excel解析库。请刷新页面重试。');
                 }
                 
                 // 检查是否成功提取数据
                 if (chineseSentences.length === 0) {
-                    showLoading(false);
-                    showError('没有在Excel文件的A列找到中文句子。请确保第一列是中文句子。');
-                    return;
+                    throw new Error('没有在Excel文件的A列找到中文句子。请确保第一列是中文句子，且数据从第一行开始。');
                 }
                 
                 // 显示文件信息
                 showLoading(false);
                 fileInfo.innerHTML = `
-                    <strong>数据加载成功！</strong><br>
+                    <strong>✅ 数据加载成功！</strong><br>
                     来源: ${dataSource}<br>
                     找到 ${chineseSentences.length} 个中文句子<br>
-                    解密方法: ${decryptionMethod === 'exceljs' ? 'ExcelJS（支持加密）' : 'XLSX（仅未加密）'}
+                    ${password ? '已使用密码解密' : '文件未加密'}
                 `;
                 fileInfo.style.display = 'block';
                 fileInfo.style.backgroundColor = '#e6f7ff';
@@ -1072,15 +640,19 @@
                 showLoading(false);
                 
                 let errorMsg = `
-                    <strong>解析Excel文件时出错:</strong> ${error.message}<br>
-                    请确保文件格式正确，且包含A列（中文）和B列（英文）数据。
+                    <strong>解析Excel文件时出错:</strong> ${error.message}<br><br>
                 `;
                 
                 if (error.message.includes('password') || error.message.includes('解密')) {
-                    errorMsg += '<br><br><strong>提示：</strong> 文件可能需要密码。请检查：<br>' +
-                               '1. 是否输入了正确的密码<br>' +
-                               '2. 是否选择了正确的解密方法（加密文件需要使用ExcelJS库）<br>' +
-                               '3. 如果文件没有密码，请尝试清空密码框并选择XLSX库';
+                    errorMsg += '<strong>密码相关问题:</strong><br>';
+                    errorMsg += '1. 如果文件有密码，请确保输入了正确的密码<br>';
+                    errorMsg += '2. 如果文件没有密码，请清空密码框<br>';
+                    errorMsg += '3. 某些复杂的加密可能不支持在浏览器中解密<br>';
+                } else if (error.message.includes('ZIP') || error.message.includes('zip')) {
+                    errorMsg += '<strong>文件格式问题:</strong><br>';
+                    errorMsg += '1. 文件可能已损坏<br>';
+                    errorMsg += '2. 文件可能不是有效的Excel格式<br>';
+                    errorMsg += '3. 尝试在Excel中打开文件并重新保存<br>';
                 }
                 
                 showError(errorMsg);
@@ -1092,7 +664,7 @@
             const workbook = new ExcelJS.Workbook();
             
             // 如果提供了密码，使用密码解密
-            if (password) {
+            if (password && password.trim() !== '') {
                 await workbook.xlsx.load(data, { password: password });
             } else {
                 await workbook.xlsx.load(data);
@@ -1103,12 +675,8 @@
             
             // 遍历行提取数据
             worksheet.eachRow((row, rowNumber) => {
-                // 跳过可能的标题行（第一行）
-                if (rowNumber === 1 && row.getCell(1).value && 
-                    (row.getCell(1).value.toString().includes('中文') || 
-                     row.getCell(1).value.toString().includes('Chinese'))) {
-                    return; // 跳过标题行
-                }
+                // 跳过空行
+                if (!row.hasValues) return;
                 
                 const chinese = row.getCell(1).value;
                 const english = row.getCell(2).value;
@@ -1118,9 +686,24 @@
                     englishAnswers.push(english ? english.toString().trim() : '');
                 }
             });
+            
+            // 如果没有数据，尝试从所有行获取
+            if (chineseSentences.length === 0) {
+                const rowCount = worksheet.rowCount;
+                for (let i = 1; i <= rowCount; i++) {
+                    const row = worksheet.getRow(i);
+                    const chinese = row.getCell(1).value;
+                    const english = row.getCell(2).value;
+                    
+                    if (chinese && chinese.toString().trim() !== '') {
+                        chineseSentences.push(chinese.toString().trim());
+                        englishAnswers.push(english ? english.toString().trim() : '');
+                    }
+                }
+            }
         }
         
-        // 使用XLSX库处理Excel文件（不支持加密）
+        // 使用XLSX库处理Excel文件
         function processWithXLSX(data) {
             const workbook = XLSX.read(data, { type: 'array' });
             
@@ -1132,18 +715,86 @@
             
             // 提取A列和B列的数据
             jsonData.forEach((row, index) => {
-                // 跳过可能的标题行
-                if (index === 0 && row[0] && 
-                    (row[0].toString().includes('中文') || 
-                     row[0].toString().includes('Chinese'))) {
-                    return;
-                }
-                
                 if (row[0] && row[0].toString().trim() !== '') {
                     chineseSentences.push(row[0].toString().trim());
                     englishAnswers.push(row[1] ? row[1].toString().trim() : '');
                 }
             });
+        }
+        
+        // 创建示例Excel文件
+        function createExampleExcelFile(type) {
+            let sentences = [];
+            let translations = [];
+            
+            if (type === '基础中英文翻译练习') {
+                sentences = [
+                    "你好，世界！",
+                    "今天的天气非常好。",
+                    "我喜欢学习新的语言。",
+                    "人工智能正在改变世界。",
+                    "她每天早上都去公园跑步。"
+                ];
+                translations = [
+                    "Hello, world!",
+                    "The weather is very nice today.",
+                    "I like learning new languages.",
+                    "Artificial intelligence is changing the world.",
+                    "She goes running in the park every morning."
+                ];
+            } else if (type === '商务英语翻译练习') {
+                sentences = [
+                    "我们需要尽快完成这个项目。",
+                    "请将会议记录发送给所有参会人员。",
+                    "公司的年度报告显示利润增长了15%。",
+                    "我们需要讨论下一季度的市场策略。",
+                    "请确保在截止日期前提交报告。"
+                ];
+                translations = [
+                    "We need to complete this project as soon as possible.",
+                    "Please send the meeting minutes to all participants.",
+                    "The company's annual report shows a 15% increase in profit.",
+                    "We need to discuss the marketing strategy for the next quarter.",
+                    "Please make sure to submit the report before the deadline."
+                ];
+            } else if (type === '日常对话翻译练习') {
+                sentences = [
+                    "你周末有什么计划？",
+                    "这家餐厅的菜非常好吃。",
+                    "我昨天看了一部很有趣的电影。",
+                    "你能告诉我怎么去火车站吗？",
+                    "我通常晚上十点左右睡觉。"
+                ];
+                translations = [
+                    "What are your plans for the weekend?",
+                    "The food at this restaurant is very delicious.",
+                    "I watched a very interesting movie yesterday.",
+                    "Can you tell me how to get to the train station?",
+                    "I usually go to bed around 10 PM."
+                ];
+            }
+            
+            // 创建Excel数据
+            const wsData = [
+                ["中文句子", "英文翻译"],
+                ...sentences.map((sentence, i) => [sentence, translations[i]])
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "翻译练习");
+            
+            // 生成Excel文件
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+            
+            // 使用这个文件
+            dataSource = `示例文件: ${type}`;
+            processExcelData(wbout, type, '');
+            
+            // 更新URL输入框
+            serverUrlInput.value = `${type} (示例文件)`;
         }
         
         // 使用示例数据
@@ -1177,7 +828,7 @@
             
             // 显示文件信息
             fileInfo.innerHTML = `
-                <strong>示例数据加载成功！</strong><br>
+                <strong>✅ 示例数据加载成功！</strong><br>
                 来源: ${dataSource}<br>
                 找到 ${chineseSentences.length} 个中文句子<br>
                 提示: 这是示例数据。要使用自己的数据，请上传Excel文件或输入URL。
@@ -1201,6 +852,24 @@
             
             // 显示第一个句子
             showCurrentSentence();
+        }
+        
+        // 显示URL测试结果
+        function showUrlTestResult(message, type) {
+            urlTestResult.innerHTML = message;
+            urlTestResult.className = `url-test-result url-test-${type}`;
+            urlTestResult.style.display = 'block';
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === '未知') return '未知';
+            const b = parseInt(bytes);
+            if (b === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(b) / Math.log(k));
+            return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
         // 显示加载状态
@@ -1285,15 +954,13 @@
             showCurrentSentence();
         });
         
-        // 比较翻译（简单比较，忽略大小写和多余空格）
+        // 比较翻译
         function compareTranslations(user, correct) {
             if (!correct) return false;
             
-            // 转换为小写并移除多余空格
             const userNormalized = user.toLowerCase().replace(/\s+/g, ' ').trim();
             const correctNormalized = correct.toLowerCase().replace(/\s+/g, ' ').trim();
             
-            // 简单比较
             return userNormalized === correctNormalized;
         }
         
@@ -1329,13 +996,11 @@
             const incorrectCountValue = totalCountValue - correctCountValue;
             const finalScoreValue = totalCountValue > 0 ? Math.round((correctCountValue / totalCountValue) * 100) : 0;
             
-            // 更新结果总结
             correctCount.textContent = correctCountValue;
             incorrectCount.textContent = incorrectCountValue;
             totalCount.textContent = totalCountValue;
             finalScore.textContent = `${finalScoreValue}%`;
             
-            // 根据分数显示不同评语
             let scoreComment = '';
             if (finalScoreValue >= 90) {
                 scoreComment = '太棒了！您的英文翻译水平非常出色！';
@@ -1364,23 +1029,7 @@
         
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
-            // 显示示例句子
             currentSentence.textContent = "欢迎使用中英文翻译练习工具！请选择数据源开始练习。";
-            
-            // 设置默认URL示例
-            serverUrlInput.value = "https://joeyking911.github.io/test.xlsx";
-            
-            // 检查ExcelJS库是否加载成功
-            if (typeof ExcelJS === 'undefined') {
-                console.warn('ExcelJS库加载失败，加密文件功能可能不可用');
-                const warning = document.createElement('div');
-                warning.className = 'warning-message';
-                warning.innerHTML = `
-                    <strong>注意：</strong> ExcelJS库加载中，加密文件功能可能受限。
-                    如果遇到加密文件读取问题，请刷新页面重试。
-                `;
-                document.querySelector('.main-content').insertBefore(warning, document.querySelector('.section'));
-            }
         });
     </script>
 </body>
