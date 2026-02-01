@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语16种时态动态学习表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.08);
+        }
+        
+        h1 {
+            color: #2c5282;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .selector-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e0;
+            background-color: white;
+            font-size: 1rem;
+            color: #2d3748;
+            min-width: 200px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        select:hover, select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #2d3748;
+        }
+        
+        .tenses-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .grid-header {
+            background-color: #2c5282;
+            color: white;
+            padding: 20px 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .grid-header.tense-type {
+            background-color: #3182ce;
+        }
+        
+        .grid-header .chinese {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .grid-header .english {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .tense-cell {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tense-cell:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tense-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        
+        .content-display {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .example {
+            font-style: italic;
+            color: #2d3748;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .example-translation {
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 2px solid #c6f6d5;
+        }
+        
+        .structure {
+            background-color: #f0fff4;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #276749;
+            font-weight: 600;
+            margin-top: auto;
+            text-align: center;
+        }
+        
+        .meaning, .usage, .key-points {
+            color: #2d3748;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .meaning-title, .usage-title, .key-points-title {
+            font-weight: 600;
+            color: #2c5282;
+            margin-right: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 30px;
+        }
+        
+        .deployed-info {
+            background-color: #f7fafc;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            color: #4a5568;
+        }
+        
+        .netlify-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #0e1e25;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            text-decoration: none;
+        }
+        
+        .netlify-badge:hover {
+            background-color: #15252e;
+        }
+        
+        @media (max-width: 1200px) {
+            .tenses-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+            
+            .grid-header:nth-child(1) {
+                display: none;
+            }
+            
+            .tense-cell:nth-child(5n+1) {
+                grid-column: 1;
+            }
+            
+            .tense-cell:nth-child(5n+2) {
+                grid-column: 2;
+            }
+            
+            .tense-cell:nth-child(5n+3) {
+                grid-column: 3;
+            }
+            
+            .tense-cell:nth-child(5n+4) {
+                grid-column: 4;
+            }
+            
+            .tense-cell:nth-child(5n+5) {
+                grid-column: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .tenses-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-header:nth-child(1),
+            .grid-header:nth-child(2),
+            .grid-header:nth-child(3) {
+                display: none;
+            }
+            
+            .tense-cell:nth-child(5n+1) {
+                grid-column: 1;
+            }
+            
+            .tense-cell:nth-child(5n+2) {
+                grid-column: 2;
+            }
+            
+            .tense-cell:nth-child(5n+3) {
+                grid-column: 1;
+            }
+            
+            .tense-cell:nth-child(5n+4) {
+                grid-column: 2;
+            }
+            
+            .tense-cell:nth-child(5n+5) {
+                grid-column: 1;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .tenses-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-header:not(.tense-type) {
+                display: none;
+            }
+            
+            .tense-cell {
+                grid-column: 1 !important;
+            }
+            
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .selector-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> 英语16种时态动态学习表</h1>
+            <p class="subtitle">通过下拉框选择显示的内容类型，动态查看每种时态的不同方面信息。参考时态结构图，包含例句、解释、形式、核心含义、常用场景和使用关键等元素。</p>
+        </header>
+        
+        <div class="control-panel">
+            <div class="selector-container">
+                <label for="content-selector"><i class="fas fa-eye"></i> 选择显示内容：</label>
+                <select id="content-selector">
+                    <option value="example">例句展示</option>
+                    <option value="translation">例句解释</option>
+                    <option value="structure">时态形式</option>
+                    <option value="meaning">核心含义</option>
+                    <option value="usage">常用场景</option>
+                    <option value="key-points">使用关键</option>
+                </select>
+            </div>
+            
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> 当前显示：<span id="current-display">例句展示</span>。点击时态卡片可查看该时态的完整信息。
+            </div>
+        </div>
+        
+        <div class="tenses-grid" id="tenses-grid">
+            <!-- 表头 -->
+            <div class="grid-header"></div>
+            <div class="grid-header">
+                <div class="chinese">过去</div>
+                <div class="english">Past</div>
+            </div>
+            <div class="grid-header">
+                <div class="chinese">现在</div>
+                <div class="english">Present</div>
+            </div>
+            <div class="grid-header">
+                <div class="chinese">将来</div>
+                <div class="english">Future</div>
+            </div>
+            <div class="grid-header">
+                <div class="chinese">过去将来</div>
+                <div class="english">Past Future</div>
+            </div>
+            
+            <!-- 第一行：一般时态 -->
+            <div class="grid-header tense-type">
+                <div class="chinese">一般</div>
+                <div class="english">Simple</div>
+            </div>
+            <!-- 一般过去时 -->
+            <div class="tense-cell" data-tense="past-simple">
+                <div class="tense-name">一般过去时<br>PAST SIMPLE</div>
+                <div class="content-display">
+                    <div class="example">I visited my grandparents last weekend.</div>
+                    <div class="example-translation">我上周末去看望了我的祖父母。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示过去某个时间发生的、已完成的动作或状态。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>描述过去发生的事件、过去的习惯或状态。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>常与表示过去的时间状语连用(yesterday, last week, in 2020)。</div>
+                </div>
+                <div class="structure">V-ed (did)</div>
+            </div>
+            <!-- 一般现在时 -->
+            <div class="tense-cell" data-tense="present-simple">
+                <div class="tense-name">一般现在时<br>PRESENT SIMPLE</div>
+                <div class="content-display">
+                    <div class="example">She works in a bank.</div>
+                    <div class="example-translation">她在银行工作。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示经常性、习惯性动作或普遍真理。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>日常习惯、客观事实、科学真理、时间表安排。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>第三人称单数动词加-s/-es；与频度副词连用(often, always)。</div>
+                </div>
+                <div class="structure">V / V-s (do/does)</div>
+            </div>
+            <!-- 一般将来时 -->
+            <div class="tense-cell" data-tense="future-simple">
+                <div class="tense-name">一般将来时<br>FUTURE SIMPLE</div>
+                <div class="content-display">
+                    <div class="example">They will arrive tomorrow morning.</div>
+                    <div class="example-translation">他们明天早上会到达。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示将来要发生的动作或存在的状态。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>预测、承诺、决定、将来计划。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>will + 动词原形；也可用be going to表示计划或预测。</div>
+                </div>
+                <div class="structure">will + V</div>
+            </div>
+            <!-- 一般过去将来时 -->
+            <div class="tense-cell" data-tense="past-future-simple">
+                <div class="tense-name">一般过去将来时<br>PAST FUTURE SIMPLE</div>
+                <div class="content-display">
+                    <div class="example">He said he would help us.</div>
+                    <div class="example-translation">他说他会帮助我们。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>从过去的角度看将来要发生的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>间接引语、过去做出的预测或承诺。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>主句为过去时，从句表示将来动作，常用would + 动词原形。</div>
+                </div>
+                <div class="structure">would + V</div>
+            </div>
+            
+            <!-- 第二行：进行时态 -->
+            <div class="grid-header tense-type">
+                <div class="chinese">进行</div>
+                <div class="english">Continuous</div>
+            </div>
+            <!-- 过去进行时 -->
+            <div class="tense-cell" data-tense="past-continuous">
+                <div class="tense-name">过去进行时<br>PAST CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">I was studying when you called.</div>
+                    <div class="example-translation">你打电话时，我正在学习。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示过去某一时刻或某段时间正在进行的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>描述过去某个时刻正在发生的事情，过去两个同时进行的动作。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>was/were + V-ing；常与表示过去特定时间的状语连用。</div>
+                </div>
+                <div class="structure">was/were + V-ing</div>
+            </div>
+            <!-- 现在进行时 -->
+            <div class="tense-cell" data-tense="present-continuous">
+                <div class="tense-name">现在进行时<br>PRESENT CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">She is reading a book now.</div>
+                    <div class="example-translation">她现在正在读一本书。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示说话时或现阶段正在进行的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>此刻正在进行的动作，当前阶段的临时情况，近期计划。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>am/is/are + V-ing；有些动词一般不用进行时态(like, know)。</div>
+                </div>
+                <div class="structure">am/is/are + V-ing</div>
+            </div>
+            <!-- 将来进行时 -->
+            <div class="tense-cell" data-tense="future-continuous">
+                <div class="tense-name">将来进行时<br>FUTURE CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">This time tomorrow, I will be flying to Paris.</div>
+                    <div class="example-translation">明天这个时候，我将在飞往巴黎的飞机上。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示将来某一时刻或某段时间正在进行的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>预测将来某个特定时间正在发生的事情，礼貌询问他人计划。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>will be + V-ing；强调将来某个时间点动作的持续性。</div>
+                </div>
+                <div class="structure">will be + V-ing</div>
+            </div>
+            <!-- 过去将来进行时 -->
+            <div class="tense-cell" data-tense="past-future-continuous">
+                <div class="tense-name">过去将来进行时<br>PAST FUTURE CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">He said he would be waiting for us at 8 PM.</div>
+                    <div class="example-translation">他说他晚上8点会在等我们。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>从过去的角度看，将来某一时刻正在进行的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>间接引语中表达过去对将来某个时间正在进行的动作的预期。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>would be + V-ing；通常用于宾语从句中，主句为过去时。</div>
+                </div>
+                <div class="structure">would be + V-ing</div>
+            </div>
+            
+            <!-- 第三行：完成时态 -->
+            <div class="grid-header tense-type">
+                <div class="chinese">完成</div>
+                <div class="english">Perfect</div>
+            </div>
+            <!-- 过去完成时 -->
+            <div class="tense-cell" data-tense="past-perfect">
+                <div class="tense-name">过去完成时<br>PAST PERFECT</div>
+                <div class="content-display">
+                    <div class="example">When I arrived, the meeting had already started.</div>
+                    <div class="example-translation">当我到达时，会议已经开始了。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示过去某一时间之前已经完成的动作（"过去的过去"）。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>描述在过去某个时间点之前已经完成的动作，过去事件的先后顺序。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>had + 过去分词；常与by the time, before, when等连用。</div>
+                </div>
+                <div class="structure">had + V-pp (had done)</div>
+            </div>
+            <!-- 现在完成时 -->
+            <div class="tense-cell" data-tense="present-perfect">
+                <div class="tense-name">现在完成时<br>PRESENT PERFECT</div>
+                <div class="content-display">
+                    <div class="example">I have finished my homework.</div>
+                    <div class="example-translation">我已经完成了我的作业。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示过去发生的动作对现在造成的影响或结果，或从过去持续到现在的动作。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>过去的动作对现在有影响，从过去持续到现在的动作，经历。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>have/has + 过去分词；不与具体过去时间连用，常与already, ever, never, for, since连用。</div>
+                </div>
+                <div class="structure">have/has + V-pp (have done)</div>
+            </div>
+            <!-- 将来完成时 -->
+            <div class="tense-cell" data-tense="future-perfect">
+                <div class="tense-name">将来完成时<br>FUTURE PERFECT</div>
+                <div class="content-display">
+                    <div class="example">By next year, I will have worked here for 10 years.</div>
+                    <div class="example-translation">到明年，我在这里工作就满10年了。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示到将来某个时间点为止，动作将会已经完成。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>预测将来某个时间之前会完成的动作，到将来某个时间为止的持续状态。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>will have + 过去分词；常与by, by the time, before + 将来时间连用。</div>
+                </div>
+                <div class="structure">will have + V-pp (will have done)</div>
+            </div>
+            <!-- 过去将来完成时 -->
+            <div class="tense-cell" data-tense="past-future-perfect">
+                <div class="tense-name">过去将来完成时<br>PAST FUTURE PERFECT</div>
+                <div class="content-display">
+                    <div class="example">She said she would have finished the report by Friday.</div>
+                    <div class="example-translation">她说她到周五之前就会完成报告。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>从过去的角度看，到将来某个时间点，动作将会已经完成。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>间接引语中表达过去对将来某时间前完成动作的预期。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>would have + 过去分词；通常用于宾语从句中，主句为过去时。</div>
+                </div>
+                <div class="structure">would have + V-pp (would have done)</div>
+            </div>
+            
+            <!-- 第四行：完成进行时态 -->
+            <div class="grid-header tense-type">
+                <div class="chinese">完成进行</div>
+                <div class="english">Perfect Continuous</div>
+            </div>
+            <!-- 过去完成进行时 -->
+            <div class="tense-cell" data-tense="past-perfect-continuous">
+                <div class="tense-name">过去完成进行时<br>PAST PERFECT CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">I had been studying for 3 hours when you called.</div>
+                    <div class="example-translation">你打电话时，我已经学习了3个小时。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示过去某个时间之前一直持续进行的动作，强调动作的持续性和过程。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>描述持续到过去某个时间点的动作，强调动作的持续时间长度。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>had been + V-ing；常与for, since等表示一段时间的状语连用。</div>
+                </div>
+                <div class="structure">had been + V-ing</div>
+            </div>
+            <!-- 现在完成进行时 -->
+            <div class="tense-cell" data-tense="present-perfect-continuous">
+                <div class="tense-name">现在完成进行时<br>PRESENT PERFECT CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">It has been raining since morning.</div>
+                    <div class="example-translation">从早上开始就一直在下雨。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示从过去某一时刻开始一直持续到现在的动作，可能刚停止或仍在继续。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>强调动作从过去持续到现在，并且可能继续下去，或强调动作的持续性。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>have/has been + V-ing；常与for, since, all day等时间状语连用。</div>
+                </div>
+                <div class="structure">have/has been + V-ing</div>
+            </div>
+            <!-- 将来完成进行时 -->
+            <div class="tense-cell" data-tense="future-perfect-continuous">
+                <div class="tense-name">将来完成进行时<br>FUTURE PERFECT CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">By next month, I will have been working here for 5 years.</div>
+                    <div class="example-translation">到下个月，我在这里工作就满5年了。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>表示到将来某个时间点为止，动作一直持续进行了一段时间。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>强调到将来某个时间点动作的持续时间长度，预测将来某动作的持续状态。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>will have been + V-ing；常与by, for + 时间段等时间状语连用。</div>
+                </div>
+                <div class="structure">will have been + V-ing</div>
+            </div>
+            <!-- 过去将来完成进行时 -->
+            <div class="tense-cell" data-tense="past-future-perfect-continuous">
+                <div class="tense-name">过去将来完成进行时<br>PAST FUTURE PERFECT CONTINUOUS</div>
+                <div class="content-display">
+                    <div class="example">He said that by July he would have been living there for 10 years.</div>
+                    <div class="example-translation">他说到7月份，他在那里居住就满10年了。</div>
+                    <div class="meaning"><span class="meaning-title">核心含义：</span>从过去的角度看，到将来某个时间点，动作将会已经持续进行了一段时间。</div>
+                    <div class="usage"><span class="usage-title">常用场景：</span>间接引语中表达过去对将来某时间前动作持续时间的预期。</div>
+                    <div class="key-points"><span class="key-points-title">使用关键：</span>would have been + V-ing；通常用于宾语从句中，强调动作持续时间。</div>
+                </div>
+                <div class="structure">would have been + V-ing</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>英语16种时态动态学习表 | 参考时态结构图设计</p>
+            <p>本页面包含例句、例句解释、形式、核心含义、常用场景、使用关键等元素，通过下拉框可动态切换显示内容</p>
+            <div class="deployed-info">
+                此页面已部署在Netlify上。要部署您自己的版本：
+                <ol style="text-align: left; max-width: 600px; margin: 10px auto;">
+                    <li>将此HTML文件保存为index.html</li>
+                    <li>在Netlify上创建一个新站点</li>
+                    <li>将文件拖放到Netlify的部署区域或连接到您的Git仓库</li>
+                </ol>
+                <p>了解更多：<a href="https://docs.netlify.com/" class="netlify-badge" target="_blank"><i class="fas fa-external-link-alt"></i> Netlify文档</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentSelector = document.getElementById('content-selector');
+            const currentDisplaySpan = document.getElementById('current-display');
+            const tenseCells = document.querySelectorAll('.tense-cell');
+            
+            // 获取选项的显示文本
+            const optionTexts = {
+                'example': '例句展示',
+                'translation': '例句解释',
+                'structure': '时态形式',
+                'meaning': '核心含义',
+                'usage': '常用场景',
+                'key-points': '使用关键'
+            };
+            
+            // 更新显示内容类型的函数
+            function updateDisplay() {
+                const selectedValue = contentSelector.value;
+                currentDisplaySpan.textContent = optionTexts[selectedValue];
+                
+                tenseCells.forEach(cell => {
+                    const contentDisplay = cell.querySelector('.content-display');
+                    const example = cell.querySelector('.example');
+                    const translation = cell.querySelector('.example-translation');
+                    const meaning = cell.querySelector('.meaning');
+                    const usage = cell.querySelector('.usage');
+                    const keyPoints = cell.querySelector('.key-points');
+                    const structure = cell.querySelector('.structure');
+                    
+                    // 首先显示所有内容
+                    example.style.display = 'block';
+                    translation.style.display = 'block';
+                    meaning.style.display = 'block';
+                    usage.style.display = 'block';
+                    keyPoints.style.display = 'block';
+                    structure.style.display = 'block';
+                    
+                    // 根据选择隐藏不需要显示的内容
+                    switch(selectedValue) {
+                        case 'example':
+                            translation.style.display = 'none';
+                            meaning.style.display = 'none';
+                            usage.style.display = 'none';
+                            keyPoints.style.display = 'none';
+                            break;
+                        case 'translation':
+                            example.style.display = 'none';
+                            meaning.style.display = 'none';
+                            usage.style.display = 'none';
+                            keyPoints.style.display = 'none';
+                            break;
+                        case 'meaning':
+                            example.style.display = 'none';
+                            translation.style.display = 'none';
+                            usage.style.display = 'none';
+                            keyPoints.style.display = 'none';
+                            break;
+                        case 'usage':
+                            example.style.display = 'none';
+                            translation.style.display = 'none';
+                            meaning.style.display = 'none';
+                            keyPoints.style.display = 'none';
+                            break;
+                        case 'key-points':
+                            example.style.display = 'none';
+                            translation.style.display = 'none';
+                            meaning.style.display = 'none';
+                            usage.style.display = 'none';
+                            break;
+                        case 'structure':
+                            // 结构形式在底部始终显示
+                            example.style.display = 'none';
+                            translation.style.display = 'none';
+                            meaning.style.display = 'none';
+                            usage.style.display = 'none';
+                            keyPoints.style.display = 'none';
+                            break;
+                    }
+                });
+            }
+            
+            // 初始更新
+            updateDisplay();
+            
+            // 当下拉框值变化时更新显示
+            contentSelector.addEventListener('change', updateDisplay);
+            
+            // 添加点击卡片显示完整信息的功能
+            tenseCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    // 切换显示完整信息
+                    const contentDisplay = this.querySelector('.content-display');
+                    const isExpanded = contentDisplay.style.height === 'auto' || this.classList.contains('expanded');
+                    
+                    if (isExpanded) {
+                        // 如果已经展开，则收起
+                        contentDisplay.style.height = '';
+                        this.classList.remove('expanded');
+                    } else {
+                        // 如果未展开，则展开
+                        // 首先计算内容高度
+                        const originalHeight = contentDisplay.offsetHeight;
+                        contentDisplay.style.height = originalHeight + 'px';
+                        
+                        // 然后设置为auto以展开
+                        setTimeout(() => {
+                            contentDisplay.style.height = 'auto';
+                            this.classList.add('expanded');
+                        }, 10);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文翻译学习系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(120deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 18px 20px;
+            border: none;
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .tab-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .tab-btn.active {
+            background-color: #fff;
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: #fff;
+            border-radius: 0 0 12px 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        /* 积累器样式 */
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            flex: 2;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #2ecc71;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .sentence-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .sentence-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+        
+        .sentence-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sentence-english {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .sentence-chinese {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        /* 练习样式 */
+        .chinese-sentence {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .chinese-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .practice-input-group {
+            margin-bottom: 20px;
+        }
+        
+        .practice-textarea {
+            min-height: 120px;
+            font-size: 1.1rem;
+        }
+        
+        .practice-btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .practice-stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback h3 {
+            margin-bottom: 10px;
+        }
+        
+        .correct-answer {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .system-stats {
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-box {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .chinese-text {
+                font-size: 1.5rem;
+            }
+            
+            .btn-group, .practice-btn-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .system-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> 英文翻译学习系统</h1>
+            <p class="subtitle">积累英文句子，练习翻译能力，一站式提升您的语言技能</p>
+        </header>
+        
+        <div class="system-stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalSentencesStat">0</div>
+                <div class="stat-label">总句子数</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="todayAddedStat">0</div>
+                <div class="stat-label">今日添加</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="practiceAccuracyStat">0%</div>
+                <div class="stat-label">练习正确率</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="practicedCountStat">0</div>
+                <div class="stat-label">已练习数</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="accumulator">
+                <i class="fas fa-plus-circle"></i> 积累句子
+            </button>
+            <button class="tab-btn" data-tab="practice">
+                <i class="fas fa-graduation-cap"></i> 练习翻译
+            </button>
+        </div>
+        
+        <!-- 积累器标签内容 -->
+        <div id="accumulator" class="tab-content active">
+            <h2 class="section-title"><i class="fas fa-edit"></i> 添加新句子</h2>
+            
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="english"><i class="fas fa-globe-americas"></i> 英文句子</label>
+                    <textarea id="english" placeholder="输入英文句子，例如：The quick brown fox jumps over the lazy dog."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chinese"><i class="fas fa-flag"></i> 中文翻译</label>
+                    <textarea id="chinese" placeholder="输入对应的中文翻译，例如：敏捷的棕色狐狸跳过了懒惰的狗。"></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button id="addBtn" class="btn-primary">
+                        <i class="fas fa-plus-circle"></i> 添加到积累库
+                    </button>
+                    <button id="clearAllBtn" class="btn-danger">
+                        <i class="fas fa-trash-alt"></i> 清除所有句子
+                    </button>
+                </div>
+                
+                <div class="stats">
+                    <div>已保存句子: <span id="sentenceCount">0</span></div>
+                    <div>今日添加: <span id="todayCount">0</span></div>
+                </div>
+            </div>
+            
+            <h2 class="section-title"><i class="fas fa-list"></i> 已积累的句子</h2>
+            <div class="sentence-list" id="sentenceList">
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <h3>暂无积累的句子</h3>
+                    <p>在上方输入英文和中文翻译，然后点击"添加到积累库"</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 练习标签内容 -->
+        <div id="practice" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-pencil-alt"></i> 翻译练习</h2>
+            
+            <div class="practice-stats">
+                <div>句子总数: <span id="totalSentences">0</span></div>
+                <div>已练习: <span id="practicedCount">0</span></div>
+                <div>正确率: <span id="accuracyRate">0%</span></div>
+            </div>
+            
+            <div class="progress-info">
+                <span>练习进度</span>
+                <span id="progressText">0/0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            
+            <div id="practiceContent">
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <h3>暂无句子可供练习</h3>
+                    <p>请在"积累句子"标签中添加一些句子，然后开始练习</p>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <!-- 反馈信息会动态显示在这里 -->
+            </div>
+            
+            <div class="practice-btn-group">
+                <button id="resetPracticeBtn" class="btn-danger">
+                    <i class="fas fa-redo"></i> 重置练习进度
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>数据保存在您的浏览器本地存储中，不会上传到任何服务器 | 使用Ctrl+Enter快捷键可快速添加句子或检查答案</p>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let sentences = [];
+        let practiceState = {
+            currentSentenceIndex: 0,
+            practicedIndices: new Set(),
+            correctCount: 0,
+            totalPracticed: 0
+        };
+        
+        // DOM元素
+        const englishInput = document.getElementById('english');
+        const chineseInput = document.getElementById('chinese');
+        const addBtn = document.getElementById('addBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const sentenceList = document.getElementById('sentenceList');
+        const sentenceCount = document.getElementById('sentenceCount');
+        const todayCount = document.getElementById('todayCount');
+        const totalSentencesElement = document.getElementById('totalSentences');
+        const practicedCountElement = document.getElementById('practicedCount');
+        const accuracyRateElement = document.getElementById('accuracyRate');
+        const practiceContent = document.getElementById('practiceContent');
+        const feedback = document.getElementById('feedback');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const resetPracticeBtn = document.getElementById('resetPracticeBtn');
+        
+        // 统计数据元素
+        const totalSentencesStat = document.getElementById('totalSentencesStat');
+        const todayAddedStat = document.getElementById('todayAddedStat');
+        const practiceAccuracyStat = document.getElementById('practiceAccuracyStat');
+        const practicedCountStat = document.getElementById('practicedCountStat');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            sentences = getSentences();
+            const savedPracticeState = getPracticeState();
+            if (savedPracticeState) {
+                practiceState = savedPracticeState;
+            }
+            renderSentenceList();
+            updateAccumulatorStats();
+            updatePracticeStats();
+            updateSystemStats();
+            
+            // 绑定事件
+            addBtn.addEventListener('click', addSentence);
+            clearAllBtn.addEventListener('click', clearAllSentences);
+            resetPracticeBtn.addEventListener('click', resetPractice);
+            
+            // 快捷键支持
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    if (document.getElementById('accumulator').classList.contains('active')) {
+                        addSentence();
+                    } else if (document.getElementById('practice').classList.contains('active')) {
+                        const checkBtn = document.getElementById('checkAnswerBtn');
+                        if (checkBtn) checkBtn.click();
+                    }
+                }
+            });
+        });
+        
+        // 选项卡功能
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 隐藏所有标签内容
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // 激活当前按钮
+                button.classList.add('active');
+                
+                // 显示对应的标签内容
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+                
+                // 如果切换到练习标签，初始化练习
+                if (tabId === 'practice') {
+                    initPractice();
+                }
+                
+                // 更新全局统计数据
+                updateSystemStats();
+            });
+        });
+        
+        // 从本地存储获取句子数组（修复中文乱码）
+        function getSentences() {
+            try {
+                const sentencesJSON = localStorage.getItem('translationSentences');
+                return sentencesJSON ? JSON.parse(decodeURIComponent(escape(sentencesJSON))) : [];
+            } catch (e) {
+                console.error('读取本地存储失败，重置数据：', e);
+                return [];
+            }
+        }
+        
+        // 保存句子到本地存储（修复中文乱码）
+        function saveSentences(sentencesArray) {
+            try {
+                const jsonStr = unescape(encodeURIComponent(JSON.stringify(sentencesArray)));
+                localStorage.setItem('translationSentences', jsonStr);
+                sentences = sentencesArray;
+                updateAccumulatorStats();
+                updateSystemStats();
+                
+                // 如果当前在练习标签，重新初始化练习
+                if (document.getElementById('practice').classList.contains('active')) {
+                    initPractice();
+                }
+            } catch (e) {
+                console.error('保存本地存储失败：', e);
+                alert('数据保存失败，请检查浏览器存储权限！');
+            }
+        }
+        
+        // 从本地存储获取练习状态
+        function getPracticeState() {
+            const stateJSON = localStorage.getItem('translationPracticeState');
+            if (stateJSON) {
+                const savedState = JSON.parse(stateJSON);
+                savedState.practicedIndices = new Set(savedState.practicedIndices || []);
+                return savedState;
+            }
+            return null;
+        }
+        
+        // 保存练习状态到本地存储
+        function savePracticeState() {
+            const stateToSave = {
+                ...practiceState,
+                practicedIndices: Array.from(practiceState.practicedIndices)
+            };
+            localStorage.setItem('translationPracticeState', JSON.stringify(stateToSave));
+            updatePracticeStats();
+            updateSystemStats();
+        }
+        
+        // 添加新句子
+        function addSentence() {
+            // 清除不可见字符，修复中文输入异常
+            const english = englishInput.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+            const chinese = chineseInput.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+            
+            if (!english || !chinese) {
+                alert('请同时输入英文句子和中文翻译！');
+                return;
+            }
+            
+            const today = new Date().toDateString();
+            const newSentence = {
+                id: Date.now(),
+                english: english,
+                chinese: chinese,
+                dateAdded: today
+            };
+            
+            const sentencesArray = getSentences();
+            sentencesArray.unshift(newSentence);
+            saveSentences(sentencesArray);
+            
+            englishInput.value = '';
+            chineseInput.value = '';
+            renderSentenceList();
+            englishInput.focus();
+        }
+        
+        // 清除所有句子
+        function clearAllSentences() {
+            if (confirm('确定要清除所有积累的句子吗？此操作不可恢复！')) {
+                saveSentences([]);
+                renderSentenceList();
+            }
+        }
+        
+        // 渲染句子列表
+        function renderSentenceList() {
+            if (sentences.length === 0) {
+                sentenceList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-comment-slash"></i>
+                        <h3>暂无积累的句子</h3>
+                        <p>在上方输入英文和中文翻译，然后点击"添加到积累库"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            sentenceList.innerHTML = '';
+            sentences.forEach((sentence, index) => {
+                const sentenceItem = document.createElement('div');
+                sentenceItem.className = 'sentence-item';
+                sentenceItem.innerHTML = `
+                    <div class="sentence-english">${sentence.english}</div>
+                    <div class="sentence-chinese">${sentence.chinese}</div>
+                    <div class="sentence-date">添加时间：${sentence.dateAdded}</div>
+                    <button class="delete-btn" data-id="${sentence.id}">删除</button>
+                `;
+                
+                // 删除按钮事件
+                sentenceItem.querySelector('.delete-btn').addEventListener('click', () => {
+                    deleteSentence(sentence.id);
+                });
+                
+                sentenceList.appendChild(sentenceItem);
+            });
+        }
+        
+        // 删除单个句子
+        function deleteSentence(id) {
+            const updatedSentences = sentences.filter(sentence => sentence.id !== id);
+            saveSentences(updatedSentences);
+            renderSentenceList();
+        }
+        
+        // 更新积累器统计数据
+        function updateAccumulatorStats() {
+            const today = new Date().toDateString();
+            const todaySentences = sentences.filter(sentence => sentence.dateAdded === today);
+            
+            sentenceCount.textContent = sentences.length;
+            todayCount.textContent = todaySentences.length;
+        }
+        
+        // 初始化练习
+        function initPractice() {
+            if (sentences.length === 0) {
+                practiceContent.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-comment-slash"></i>
+                        <h3>暂无句子可供练习</h3>
+                        <p>请在"积累句子"标签中添加一些句子，然后开始练习</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 找到未练习的句子
+            const unpracticedIndices = [];
+            sentences.forEach((_, index) => {
+                if (!practiceState.practicedIndices.has(index)) {
+                    unpracticedIndices.push(index);
+                }
+            });
+            
+            // 如果所有句子都练习过了，随机选一个
+            let currentIndex;
+            if (unpracticedIndices.length > 0) {
+                currentIndex = unpracticedIndices[Math.floor(Math.random() * unpracticedIndices.length)];
+            } else {
+                currentIndex = Math.floor(Math.random() * sentences.length);
+            }
+            
+            practiceState.currentSentenceIndex = currentIndex;
+            renderPracticeContent();
+            updatePracticeProgress();
+        }
+        
+        // 渲染练习内容
+        function renderPracticeContent() {
+            const currentSentence = sentences[practiceState.currentSentenceIndex];
+            practiceContent.innerHTML = `
+                <div class="chinese-sentence">
+                    <div class="chinese-text">${currentSentence.chinese}</div>
+                </div>
+                <div class="practice-input-group">
+                    <label for="practiceAnswer"><i class="fas fa-pencil"></i> 请输入对应的英文翻译</label>
+                    <textarea id="practiceAnswer" class="practice-textarea" placeholder="在此输入您的翻译答案..."></textarea>
+                </div>
+                <div class="practice-btn-group">
+                    <button id="checkAnswerBtn" class="btn-primary">
+                        <i class="fas fa-check"></i> 检查答案
+                    </button>
+                    <button id="nextSentenceBtn" class="btn-secondary" style="display: none;">
+                        <i class="fas fa-arrow-right"></i> 下一个句子
+                    </button>
+                </div>
+            `;
+            
+            // 绑定检查答案按钮事件
+            document.getElementById('checkAnswerBtn').addEventListener('click', checkAnswer);
+            // 绑定下一个句子按钮事件
+            document.getElementById('nextSentenceBtn').addEventListener('click', initPractice);
+        }
+        
+        // 检查答案
+        function checkAnswer() {
+            const userAnswer = document.getElementById('practiceAnswer').value.trim();
+            const currentSentence = sentences[practiceState.currentSentenceIndex];
+            const correctAnswer = currentSentence.english.trim();
+            
+            feedback.style.display = 'block';
+            practiceState.totalPracticed++;
+            
+            // 简单的答案比对（忽略大小写和标点符号）
+            const normalize = (str) => str.toLowerCase().replace(/[.,!?;:"'()]/g, '').trim();
+            const isCorrect = normalize(userAnswer) === normalize(correctAnswer);
+            
+            if (isCorrect) {
+                practiceState.correctCount++;
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `
+                    <h3><i class="fas fa-check-circle"></i> 回答正确！</h3>
+                    <p>您的翻译符合标准答案，真棒！</p>
+                `;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `
+                    <h3><i class="fas fa-times-circle"></i> 回答错误</h3>
+                    <p>您的答案和标准答案有差异，请参考：</p>
+                    <div class="correct-answer">${correctAnswer}</div>
+                `;
+            }
+            
+            // 标记为已练习
+            practiceState.practicedIndices.add(practiceState.currentSentenceIndex);
+            savePracticeState();
+            
+            // 隐藏检查按钮，显示下一个按钮
+            document.getElementById('checkAnswerBtn').style.display = 'none';
+            document.getElementById('nextSentenceBtn').style.display = 'block';
+            
+            // 更新练习进度
+            updatePracticeProgress();
+        }
+        
+        // 更新练习统计数据
+        function updatePracticeStats() {
+            totalSentencesElement.textContent = sentences.length;
+            practicedCountElement.textContent = practiceState.practicedIndices.size;
+            
+            const accuracy = sentences.length === 0 || practiceState.totalPracticed === 0 
+                ? 0 
+                : Math.round((practiceState.correctCount / practiceState.totalPracticed) * 100);
+            accuracyRateElement.textContent = `${accuracy}%`;
+        }
+        
+        // 更新练习进度条
+        function updatePracticeProgress() {
+            const total = sentences.length;
+            const practiced = practiceState.practicedIndices.size;
+            const progress = total === 0 ? 0 : (practiced / total) * 100;
+            
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${practiced}/${total}`;
+        }
+        
+        // 重置练习进度
+        function resetPractice() {
+            if (confirm('确定要重置练习进度吗？所有练习记录将被清空！')) {
+                practiceState = {
+                    currentSentenceIndex: 0,
+                    practicedIndices: new Set(),
+                    correctCount: 0,
+                    totalPracticed: 0
+                };
+                savePracticeState();
+                updatePracticeStats();
+                updatePracticeProgress();
+                initPractice();
+            }
+        }
+        
+        // 更新系统全局统计
+        function updateSystemStats() {
+            const today = new Date().toDateString();
+            const todayAdded = sentences.filter(sentence => sentence.dateAdded === today).length;
+            const accuracy = practiceState.totalPracticed === 0 
+                ? 0 
+                : Math.round((practiceState.correctCount / practiceState.totalPracticed) * 100);
+            
+            totalSentencesStat.textContent = sentences.length;
+            todayAddedStat.textContent = todayAdded;
+            practiceAccuracyStat.textContent = `${accuracy}%`;
+            practicedCountStat.textContent = practiceState.practicedIndices.size;
+        }
+    </script>
+</body>
+</html>

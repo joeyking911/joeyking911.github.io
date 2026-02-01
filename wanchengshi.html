@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现在完成时 vs. 现在完成进行时</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2c5282;
+            --secondary-color: #38b2ac;
+            --accent-color: #ed8936;
+            --light-color: #f7fafc;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --success-color: #48bb78;
+            --warning-color: #ecc94b;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background-color: #edf2f7;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 18px 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            color: var(--text-color);
+            min-width: 150px;
+        }
+        
+        .tab:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            margin: 30px 0 20px;
+            font-size: 1.8rem;
+        }
+        
+        .section-subtitle {
+            color: var(--secondary-color);
+            margin: 25px 0 15px;
+            font-size: 1.4rem;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 18px 15px;
+            font-size: 1.1rem;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #edf2f7;
+        }
+        
+        .tense-label {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .present-perfect-label {
+            background-color: rgba(44, 82, 130, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .present-perfect-cont-label {
+            background-color: rgba(56, 178, 172, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        .usage-block {
+            background-color: #f7fafc;
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .usage-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .usage-title i {
+            color: var(--accent-color);
+        }
+        
+        .example-box {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+        }
+        
+        .example-english {
+            font-style: italic;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .example-chinese {
+            color: #4a5568;
+            padding-left: 15px;
+            border-left: 3px solid var(--border-color);
+        }
+        
+        .highlight {
+            background-color: #fff8e1;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #d69e2e;
+        }
+        
+        .time-adverbials {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .time-adverbial {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-weight: 600;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .present-perfect-adverbial {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .present-perfect-cont-adverbial {
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .verb-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .verb-item {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .practice-box {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .practice-question {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #c6f6d5;
+        }
+        
+        .answer {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .show-answer-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .show-answer-btn:hover {
+            background-color: #319795;
+        }
+        
+        .decision-flow {
+            background: linear-gradient(to right, #ebf4ff, #f0fff4);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .final-principle {
+            background-color: #feebc8;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid #fbd38d;
+            text-align: center;
+        }
+        
+        .principle-text {
+            font-size: 1.3rem;
+            color: #744210;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .principle-example {
+            font-style: italic;
+            color: #975a16;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #718096;
+            border-top: 1px solid var(--border-color);
+            background-color: #f8fafc;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tab {
+                min-width: 120px;
+                font-size: 1rem;
+                padding: 15px 5px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .tab.active {
+                border-bottom: 3px solid var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-balance-scale"></i> 现在完成时 vs. 现在完成进行时</h1>
+            <p class="subtitle">全面对比分析英语中两个最易混淆的时态 - 详解用法差异、核心区别与实用判断方法</p>
+        </header>
+        
+        <div class="nav-tabs">
+            <div class="tab active" data-tab="overview">核心区别总览</div>
+            <div class="tab" data-tab="usage">详细用法对比</div>
+            <div class="tab" data-tab="comparison">关键对比辨析</div>
+            <div class="tab" data-tab="practice">经典对比练习</div>
+            <div class="tab" data-tab="summary">总结与要点</div>
+        </div>
+        
+        <!-- 核心区别总览 -->
+        <div id="overview" class="tab-content active">
+            <h2 class="section-title"><i class="fas fa-columns"></i> 核心区别总览</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th width="20%">对比方面</th>
+                        <th width="40%"><span class="tense-label present-perfect-label">现在完成时</span><br>Present Perfect</th>
+                        <th width="40%"><span class="tense-label present-perfect-cont-label">现在完成进行时</span><br>Present Perfect Continuous</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>基本形式</strong></td>
+                        <td>have/has + 过去分词 (V-ed)</td>
+                        <td>have/has been + 现在分词 (V-ing)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>核心焦点</strong></td>
+                        <td>动作的<strong>结果、完成状态或经验</strong></td>
+                        <td>动作的<strong>持续过程、进行状态</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>时间视角</strong></td>
+                        <td>关注过去动作与现在的<strong>联系</strong></td>
+                        <td>关注从过去到现在的<strong>持续过程</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>完成性</strong></td>
+                        <td>强调动作<strong>已经完成</strong>或已完成的影响</td>
+                        <td>强调动作<strong>可能仍在继续</strong>或刚结束不久</td>
+                    </tr>
+                    <tr>
+                        <td><strong>常见状语</strong></td>
+                        <td>
+                            <div class="time-adverbials">
+                                <div class="time-adverbial present-perfect-adverbial">already</div>
+                                <div class="time-adverbial present-perfect-adverbial">yet</div>
+                                <div class="time-adverbial present-perfect-adverbial">ever</div>
+                                <div class="time-adverbial present-perfect-adverbial">never</div>
+                                <div class="time-adverbial present-perfect-adverbial">just</div>
+                                <div class="time-adverbial present-perfect-adverbial">before</div>
+                                <div class="time-adverbial present-perfect-adverbial">once</div>
+                                <div class="time-adverbial present-perfect-adverbial">twice</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="time-adverbials">
+                                <div class="time-adverbial present-perfect-cont-adverbial">for</div>
+                                <div class="time-adverbial present-perfect-cont-adverbial">since</div>
+                                <div class="time-adverbial present-perfect-cont-adverbial">all day</div>
+                                <div class="time-adverbial present-perfect-cont-adverbial">recently</div>
+                                <div class="time-adverbial present-perfect-cont-adverbial">lately</div>
+                                <div class="time-adverbial present-perfect-cont-adverbial">how long</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-lightbulb"></i> 一句话概括</div>
+                <p><strong>现在完成时</strong>强调"<span class="highlight">完成了什么</span>"（结果/经验），而<strong>现在完成进行时</strong>强调"<span class="highlight">一直在做什么</span>"（过程/持续）。</p>
+            </div>
+        </div>
+        
+        <!-- 详细用法对比 -->
+        <div id="usage" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-list-alt"></i> 详细用法对比</h2>
+            
+            <h3 class="section-subtitle"><span class="tense-label present-perfect-label">现在完成时</span> 三大核心用法</h3>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-check-circle"></i> 用法A：已完成动作的当前影响</div>
+                <p><strong>特点：</strong>动作在<strong>过去已结束</strong>，但结果或影响<strong>现在仍然存在</strong></p>
+                <p><strong>标志词：</strong> already, just, yet</p>
+                
+                <div class="example-box">
+                    <div class="example-english">I have finished my homework.</div>
+                    <div class="example-chinese">我已完成作业。</div>
+                    <div class="example-explanation">→ 作业已完成，现在可以休息/做其他事</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">She has lost her keys.</div>
+                    <div class="example-chinese">她丢了钥匙。</div>
+                    <div class="example-explanation">→ 钥匙过去丢失，现在仍然找不到</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">They have just arrived.</div>
+                    <div class="example-chinese">他们刚刚到达。</div>
+                    <div class="example-explanation">→ 到达是最近的动作，现在人在这里</div>
+                </div>
+            </div>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-hourglass-half"></i> 用法B：从过去持续到现在的状态</div>
+                <p><strong>特点：</strong>状态从<strong>过去开始一直延续到现在</strong></p>
+                <p><strong>标志词：</strong> for, since, how long</p>
+                
+                <div class="example-box">
+                    <div class="example-english">I have known him for ten years.</div>
+                    <div class="example-chinese">我认识他十年了。</div>
+                    <div class="example-explanation">→ 从十年前认识，到现在仍认识</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">She has lived here since 2015.</div>
+                    <div class="example-chinese">她自2015年就住在这里。</div>
+                    <div class="example-explanation">→ 居住状态从2015年持续到现在</div>
+                </div>
+            </div>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-history"></i> 用法C：人生经历（与具体时间无关）</div>
+                <p><strong>特点：</strong>表示<strong>曾经有过</strong>的经历，不关心具体时间</p>
+                <p><strong>标志词：</strong> ever, never, once, twice, before</p>
+                
+                <div class="example-box">
+                    <div class="example-english">I have visited Japan three times.</div>
+                    <div class="example-chinese">我去过日本三次。</div>
+                    <div class="example-explanation">→ 强调经历，不关心是何时去的</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">Have you ever eaten sushi?</div>
+                    <div class="example-chinese">你吃过寿司吗？</div>
+                    <div class="example-explanation">→ 询问人生经验</div>
+                </div>
+            </div>
+            
+            <h3 class="section-subtitle" style="margin-top: 50px;"><span class="tense-label present-perfect-cont-label">现在完成进行时</span> 三大核心用法</h3>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-spinner"></i> 用法A：强调动作持续进行的过程</div>
+                <p><strong>特点：</strong>动作从<strong>过去开始一直持续到现在</strong>，可能刚结束或仍在继续</p>
+                <p><strong>标志词：</strong> for, since, all day, how long</p>
+                
+                <div class="example-box">
+                    <div class="example-english">I have been waiting for you for two hours!</div>
+                    <div class="example-chinese">我等了你两个小时！</div>
+                    <div class="example-explanation">→ 强调等待的<strong>过程漫长</strong></div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">It has been raining since morning.</div>
+                    <div class="example-chinese">从早上开始就一直在下雨。</div>
+                    <div class="example-explanation">→ 强调下雨<strong>持续不断</strong></div>
+                </div>
+            </div>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-question-circle"></i> 用法B：解释当前状态的原因</div>
+                <p><strong>特点：</strong>用<strong>持续的动作</strong>解释<strong>现在的情况</strong></p>
+                
+                <div class="example-box">
+                    <div class="example-english">You look tired. Have you been working hard?</div>
+                    <div class="example-chinese">你看起来很累。一直在努力工作吗？</div>
+                    <div class="example-explanation">→ 用"一直在工作"解释"看起来很累"</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">My eyes are red because I have been reading for hours.</div>
+                    <div class="example-chinese">我眼睛红是因为我连续读了几小时书。</div>
+                    <div class="example-explanation">→ 用"持续阅读"解释"眼睛红"</div>
+                </div>
+            </div>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-redo-alt"></i> 用法C：近期重复性活动</div>
+                <p><strong>特点：</strong>表示<strong>近期重复发生</strong>的动作，强调其规律性</p>
+                <p><strong>标志词：</strong> recently, lately</p>
+                
+                <div class="example-box">
+                    <div class="example-english">I have been going to the gym regularly.</div>
+                    <div class="example-chinese">我最近定期去健身房。</div>
+                    <div class="example-explanation">→ 强调近期规律性的活动</div>
+                </div>
+                
+                <div class="example-box">
+                    <div class="example-english">He has been calling me every day.</div>
+                    <div class="example-chinese">他每天都给我打电话。</div>
+                    <div class="example-explanation">→ 强调重复频率</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 关键对比辨析 -->
+        <div id="comparison" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-exchange-alt"></i> 关键对比与辨析</h2>
+            
+            <div class="comparison-section">
+                <h3 class="section-subtitle">对比1：已完成 vs. 可能仍在继续</h3>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th width="50%"><span class="tense-label present-perfect-label">现在完成时</span></th>
+                            <th width="50%"><span class="tense-label present-perfect-cont-label">现在完成进行时</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="example-english">I have read that book.</div>
+                                <div class="example-chinese">我读过那本书。</div>
+                                <div class="example-explanation" style="margin-top: 10px;">→ 书<strong>已读完</strong></div>
+                            </td>
+                            <td>
+                                <div class="example-english">I have been reading that book.</div>
+                                <div class="example-chinese">我一直在读那本书。</div>
+                                <div class="example-explanation" style="margin-top: 10px;">→ 书<strong>可能还没读完</strong>，仍在继续读</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="comparison-section" style="margin-top: 40px;">
+                <h3 class="section-subtitle">对比2：关注结果 vs. 关注过程</h3>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th width="50%"><span class="tense-label present-perfect-label">现在完成时</span></th>
+                            <th width="50%"><span class="tense-label present-perfect-cont-label">现在完成进行时</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="example-english">I have cleaned the kitchen.</div>
+                                <div class="example-chinese">我打扫了厨房。</div>
+                                <div class="example-explanation" style="margin-top: 10px;">→ 厨房<strong>现在干净了</strong>（关注<strong>结果</strong>）</div>
+                            </td>
+                            <td>
+                                <div class="example-english">I have been cleaning the kitchen.</div>
+                                <div class="example-chinese">我一直在打扫厨房。</div>
+                                <div class="example-explanation" style="margin-top: 10px;">→ 强调<strong>打扫的过程</strong>（可能还没打扫完，也可能刚结束）</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="comparison-section" style="margin-top: 40px;">
+                <h3 class="section-subtitle">对比3：状态动词 vs. 动作动词</h3>
+                
+                <div class="usage-block">
+                    <div class="usage-title"><i class="fas fa-ban"></i> 状态动词</div>
+                    <p>状态动词（表示状态而非动作）通常<strong>只用现在完成时</strong>，不能用现在完成进行时</p>
+                    <p><strong>常见状态动词：</strong></p>
+                    <div class="verb-list">
+                        <div class="verb-item">know</div>
+                        <div class="verb-item">like</div>
+                        <div class="verb-item">love</div>
+                        <div class="verb-item">hate</div>
+                        <div class="verb-item">understand</div>
+                        <div class="verb-item">believe</div>
+                        <div class="verb-item">own</div>
+                        <div class="verb-item">have</div>
+                        <div class="verb-item">belong</div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-english">正确：I have known her for years.</div>
+                        <div class="example-chinese">我认识她很多年了。</div>
+                        <div class="example-explanation" style="color: #e53e3e; margin-top: 8px;">✗ 错误：I have been knowing her for years. (状态动词无进行式)</div>
+                    </div>
+                </div>
+                
+                <div class="usage-block" style="margin-top: 30px;">
+                    <div class="usage-title"><i class="fas fa-check-circle"></i> 动作动词</div>
+                    <p>动作动词（表示具体动作）两者皆可，但意义不同</p>
+                    <p><strong>常见动作动词：</strong></p>
+                    <div class="verb-list">
+                        <div class="verb-item">work</div>
+                        <div class="verb-item">study</div>
+                        <div class="verb-item">live</div>
+                        <div class="verb-item">wait</div>
+                        <div class="verb-item">play</div>
+                        <div class="verb-item">read</div>
+                        <div class="verb-item">write</div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-english">I have worked here for 5 years.</div>
+                        <div class="example-chinese">我在这里工作了5年。</div>
+                        <div class="example-explanation">→ 强调<strong>经验/状态</strong>（可能刚离职）</div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <div class="example-english">I have been working here for 5 years.</div>
+                        <div class="example-chinese">我一直在这里工作。</div>
+                        <div class="example-explanation">→ 强调<strong>持续过程</strong>（仍在职）</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comparison-section" style="margin-top: 40px;">
+                <h3 class="section-subtitle">时间状语差异</h3>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <h4><span class="tense-label present-perfect-label">现在完成时</span> 常用状语</h4>
+                        <div class="time-adverbials">
+                            <div class="time-adverbial present-perfect-adverbial">once</div>
+                            <div class="time-adverbial present-perfect-adverbial">twice</div>
+                            <div class="time-adverbial present-perfect-adverbial">three times</div>
+                            <div class="time-adverbial present-perfect-adverbial">many times</div>
+                            <div class="time-adverbial present-perfect-adverbial">already</div>
+                            <div class="time-adverbial present-perfect-adverbial">yet</div>
+                            <div class="time-adverbial present-perfect-adverbial">just</div>
+                            <div class="time-adverbial present-perfect-adverbial">recently</div>
+                            <div class="time-adverbial present-perfect-adverbial">ever</div>
+                            <div class="time-adverbial present-perfect-adverbial">never</div>
+                            <div class="time-adverbial present-perfect-adverbial">before</div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-english">I have watched this movie twice.</div>
+                            <div class="example-chinese">这部电影我看过两次了。</div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-english">Have you ever been to Paris?</div>
+                            <div class="example-chinese">你去过巴黎吗？</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 300px;">
+                        <h4><span class="tense-label present-perfect-cont-label">现在完成进行时</span> 常用状语</h4>
+                        <div class="time-adverbials">
+                            <div class="time-adverbial present-perfect-cont-adverbial">for</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">since</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">all day</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">all morning</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">recently</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">lately</div>
+                            <div class="time-adverbial present-perfect-cont-adverbial">how long</div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-english">I have been studying for three hours.</div>
+                            <div class="example-chinese">我已经学习了三个小时。</div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <div class="example-english">How long have you been waiting?</div>
+                            <div class="example-chinese">你等了多久了？</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 经典对比练习 -->
+        <div id="practice" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-pen-alt"></i> 经典对比练习</h2>
+            <p style="margin-bottom: 25px;">根据括号内的提示选择合适的时态，点击按钮查看答案和解析。</p>
+            
+            <div class="practice-box">
+                <div class="practice-question">
+                    <p><strong>1. I ______ (write) emails all morning.</strong> (强调过程)</p>
+                    <button class="show-answer-btn" data-answer="1">查看答案</button>
+                    <div class="answer" id="answer1">
+                        <p><strong>答案：</strong> have been writing</p>
+                        <p><strong>翻译：</strong> 我一上午都在写邮件。</p>
+                        <p><strong>解析：</strong> 使用现在完成进行时，强调"写邮件"这个动作从早上开始持续到现在，关注的是过程。</p>
+                    </div>
+                </div>
+                
+                <div class="practice-question">
+                    <p><strong>2. I ______ (write) 10 emails so far.</strong> (强调结果)</p>
+                    <button class="show-answer-btn" data-answer="2">查看答案</button>
+                    <div class="answer" id="answer2">
+                        <p><strong>答案：</strong> have written</p>
+                        <p><strong>翻译：</strong> 到目前为止我写了10封邮件。</p>
+                        <p><strong>解析：</strong> 使用现在完成时，强调"写"这个动作的结果（10封邮件已经完成）。</p>
+                    </div>
+                </div>
+                
+                <div class="practice-question">
+                    <p><strong>3. How long ______ (you/live) in London?</strong> (询问持续时间)</p>
+                    <button class="show-answer-btn" data-answer="3">查看答案</button>
+                    <div class="answer" id="answer3">
+                        <p><strong>答案：</strong> have you lived / have you been living (两者皆可)</p>
+                        <p><strong>翻译：</strong> 你在伦敦住了多久了？</p>
+                        <p><strong>解析：</strong> 当动词是"live"这类持续动词时，现在完成时和现在完成进行时都可以用，但侧重点不同：现在完成时强调状态，现在完成进行时强调过程。</p>
+                    </div>
+                </div>
+                
+                <div class="practice-question">
+                    <p><strong>4. How many times ______ (you/visit) London?</strong> (询问次数)</p>
+                    <button class="show-answer-btn" data-answer="4">查看答案</button>
+                    <div class="answer" id="answer4">
+                        <p><strong>答案：</strong> have you visited</p>
+                        <p><strong>翻译：</strong> 你去过伦敦多少次了？</p>
+                        <p><strong>解析：</strong> 询问"次数"时，通常使用现在完成时，因为次数与完成的结果有关，而不是持续的过程。</p>
+                    </div>
+                </div>
+                
+                <div class="practice-question">
+                    <p><strong>5. You're covered in paint! What ______ (you/do)?</strong> (解释现状)</p>
+                    <button class="show-answer-btn" data-answer="5">查看答案</button>
+                    <div class="answer" id="answer5">
+                        <p><strong>答案：</strong> have you been doing</p>
+                        <p><strong>翻译：</strong> 你身上都是油漆！你一直在干什么？</p>
+                        <p><strong>解析：</strong> 用现在完成进行时询问对方"一直在做什么"，以解释当前的状态（身上都是油漆）。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="decision-flow">
+                <h3 class="section-subtitle">实用判断流程</h3>
+                <p>遇到动词时，问自己以下问题：</p>
+                
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <p><strong>我想强调结果还是过程？</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>结果 → 现在完成时</li>
+                            <li>过程 → 现在完成进行时</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <p><strong>这个动词是状态动词还是动作动词？</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>状态动词 (know, have, like) → 现在完成时</li>
+                            <li>动作动词 → 两种都可能，看语境</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <p><strong>动作是否明确结束？</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>明确结束 → 现在完成时</li>
+                            <li>可能还在继续 → 现在完成进行时</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <p><strong>时间状语是什么？</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>for/since + 时间段 → 两者皆可，但意义不同</li>
+                            <li>already/just/yet → 现在完成时</li>
+                            <li>all day/recently → 现在完成进行时更自然</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 总结与要点 -->
+        <div id="summary" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-clipboard-check"></i> 总结要点</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th width="30%">情境</th>
+                        <th width="30%">首选时态</th>
+                        <th width="40%">原因</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>强调结果或完成</td>
+                        <td><span class="tense-label present-perfect-label">现在完成时</span></td>
+                        <td>关注"完成了什么"</td>
+                    </tr>
+                    <tr>
+                        <td>强调过程或持续</td>
+                        <td><span class="tense-label present-perfect-cont-label">现在完成进行时</span></td>
+                        <td>关注"一直在做什么"</td>
+                    </tr>
+                    <tr>
+                        <td>解释当前状况</td>
+                        <td><span class="tense-label present-perfect-cont-label">现在完成进行时</span></td>
+                        <td>连接原因与结果</td>
+                    </tr>
+                    <tr>
+                        <td>谈论人生经历</td>
+                        <td><span class="tense-label present-perfect-label">现在完成时</span></td>
+                        <td>不关心具体时间</td>
+                    </tr>
+                    <tr>
+                        <td>使用状态动词</td>
+                        <td><span class="tense-label present-perfect-label">现在完成时</span></td>
+                        <td>状态动词无进行式</td>
+                    </tr>
+                    <tr>
+                        <td>带"次数"状语</td>
+                        <td><span class="tense-label present-perfect-label">现在完成时</span></td>
+                        <td>次数与完成有关</td>
+                    </tr>
+                    <tr>
+                        <td>带"持续时间"状语</td>
+                        <td>两者皆可</td>
+                        <td>但侧重点不同</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="final-principle">
+                <div class="principle-text">最终判断原则</div>
+                <div class="principle-example">
+                    如果想说"<strong>已经做完</strong>"或"<strong>有这种经验</strong>" → 用<strong>现在完成时</strong><br>
+                    如果想说"<strong>一直在做</strong>"或"<strong>最近经常做</strong>" → 用<strong>现在完成进行时</strong>
+                </div>
+                <p style="margin-top: 20px; color: #744210;">
+                    这两个时态的区别关键在于<strong>说话人的意图</strong>：你想强调<strong>完成了什么</strong>，还是<strong>一直在做什么</strong>？
+                </p>
+            </div>
+            
+            <div class="usage-block">
+                <div class="usage-title"><i class="fas fa-check-double"></i> 快速自查清单</div>
+                <ul style="margin-left: 20px; margin-top: 15px;">
+                    <li><strong>现在完成时：</strong> 结果/完成/经验 + already/just/yet/ever/never + 状态动词</li>
+                    <li><strong>现在完成进行时：</strong> 过程/持续/未完成 + for/since/all day + 解释现状</li>
+                    <li><strong>两者皆可：</strong> 动作动词 + for/since (但含义不同)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>现在完成时 vs. 现在完成进行时 详细对比 | 设计用于英语教学与学习</p>
+            <p>本页面包含完整的对比分析、例句、练习和实用判断指南</p>
+        </footer>
+    </div>
+
+    <script>
+        // 选项卡切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签的激活状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // 隐藏所有内容
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // 激活当前标签
+                    this.classList.add('active');
+                    
+                    // 显示对应的内容
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 显示答案功能
+            const answerButtons = document.querySelectorAll('.show-answer-btn');
+            
+            answerButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const answerId = this.getAttribute('data-answer');
+                    const answerElement = document.getElementById(`answer${answerId}`);
+                    
+                    if (answerElement.style.display === 'block') {
+                        answerElement.style.display = 'none';
+                        this.textContent = '查看答案';
+                    } else {
+                        answerElement.style.display = 'block';
+                        this.textContent = '隐藏答案';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
